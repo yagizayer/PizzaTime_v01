@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public PositionCell PlayerCell = new PositionCell();
+    public PositionCell PlayerCell ;
     private EventManager _eventManager;
     private GameManager _gameManager;
     private Map _map;
