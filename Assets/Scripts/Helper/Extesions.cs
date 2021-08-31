@@ -208,6 +208,23 @@ namespace Helper
                 result.Add(item);
             return result;
         }
+
+        public static int GetChildIndex(this Transform me, Transform targetChild)
+        {
+            int childIndex = 0;
+            foreach (Transform child in me)
+                if (child.GetHashCode() == targetChild.GetHashCode()) return childIndex;
+            return -1;
+        }
+
+        public static List<T> ReduceDimension<T>(this List<List<T>> me)
+        {
+            List<T> result = new List<T>();
+            foreach (List<T> item in me)
+                result.AddRange(item);
+            return result;
+        }
+
     }
 
 }
