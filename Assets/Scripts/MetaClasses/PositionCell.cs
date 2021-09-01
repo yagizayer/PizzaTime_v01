@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
-[RequireComponent(typeof(Image))]
 public class PositionCell : MonoBehaviour
 {
 

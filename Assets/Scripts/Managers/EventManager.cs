@@ -5,15 +5,20 @@ using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
-    [SerializeField] private UnityEvent<CellDirection> PlayerInputEvent = new UnityEvent<CellDirection>();
+    [SerializeField] private UnityEvent<CellDirection> PlayerMovementEvent = new UnityEvent<CellDirection>();
+    [SerializeField] private UnityEvent<Customer> PlayerKnockEvent = new UnityEvent<Customer>();
 
 
-    public void InvokePlayerInputEvent(CellDirection direction)
+    public void InvokePlayerMovementEvent(CellDirection direction)
     {
-        PlayerInputEvent.Invoke(direction);
+        PlayerMovementEvent.Invoke(direction);
+    }
+    public void InvokePlayerKnockEvent(Customer customer)
+    {
+        PlayerKnockEvent.Invoke(customer);
     }
 
-    public void TestFunc(CellDirection message)
+    public void TestFunc(string message)
     {
         Debug.Log(message);
     }
