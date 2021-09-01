@@ -6,6 +6,8 @@ using UnityEngine;
 
 [System.Serializable]
 public class CellToCustomer : SerializableDictionaryBase<Transform, Customer> { }
+[System.Serializable]
+public class CarSpawnerDict : SerializableDictionaryBase<Transform, CarMotions> { }
 public class GameManager : MonoBehaviour
 {
     [Header("Important Variables")]
@@ -18,18 +20,32 @@ public class GameManager : MonoBehaviour
     [Header("Player Variables")]
     public PositionCell StartingPosition;
     public PlayerManager Player;
+    [Header("Customer Variables")]
+    [SerializeField] private CellToCustomer _allCustomers = new CellToCustomer();
+    public CellToCustomer AllCustomers => _allCustomers;
+    [Header("Car Variables")]
+    public CarSpawnerDict CarSpawners = new CarSpawnerDict();
+
+
 
     [HideInInspector]
     public EventManager GameEventManager;
     [HideInInspector]
     internal SpritesDict SpriteDatabase;
-    [SerializeField] private CellToCustomer _allCustomers = new CellToCustomer();
-    public CellToCustomer AllCustomers => _allCustomers;
-
     private void Start()
     {
         GameEventManager = FindObjectOfType<EventManager>();
         SpriteDatabase = FindObjectOfType<Database>().AllSpritesDict;
+        StartCoroutine(Tick());
+    }
+
+    private IEnumerator Tick()
+    {
+        while (true)
+        {
+            GameEventManager.InvokeTickEvent();
+            yield return new WaitForSecondsRealtime(TimeStep);
+        }
     }
 
     public void TakePizza(Customer customer)

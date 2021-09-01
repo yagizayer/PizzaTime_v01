@@ -365,6 +365,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccfb59f4a40c9e94ca858fceac27725f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 571438166}
+        m_TargetAssemblyTypeName: CarsManager, Assembly-CSharp
+        m_MethodName: ProceedCars
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   PlayerMovementEvent:
     m_PersistentCalls:
       m_Calls:
@@ -407,6 +422,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  MissEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &102907980
 GameObject:
   m_ObjectHideFlags: 0
@@ -1629,8 +1647,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 571438163}
-  - component: {fileID: 571438164}
   - component: {fileID: 571438165}
+  - component: {fileID: 571438166}
+  - component: {fileID: 571438164}
   m_Layer: 0
   m_Name: GameManagement
   m_TagString: Untagged
@@ -1666,11 +1685,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CarSpriteFront: {fileID: 21300000, guid: 0848700b38b4dde46b9704c5f1d76102, type: 3}
   CarSpriteSide: {fileID: 21300000, guid: af963057aadb24e4d8e873a76c80f82b, type: 3}
-  TimeStep: 1
+  TimeStep: 0.5
   GameMap: {fileID: 102907982}
   StartingPosition: {fileID: 952571907}
   Player: {fileID: 0}
-  GameEventManager: {fileID: 0}
   _allCustomers:
     reorderableList:
       canAdd: 1
@@ -1678,7 +1696,7 @@ MonoBehaviour:
       draggable: 1
       expandable: 1
       multipleSelection: 1
-      isExpanded: 1
+      isExpanded: 0
       label:
         m_Text: Keys
         m_Image: {fileID: 0}
@@ -1692,8 +1710,8 @@ MonoBehaviour:
       elementNameProperty: 
       elementNameOverride: 
       elementIcon: {fileID: 0}
-    reqReferences: {fileID: 0}
-    isExpanded: 1
+    reqReferences: {fileID: 11400000, guid: 3d6785e46e940b843aa5fbe4ca729d60, type: 2}
+    isExpanded: 0
     _keyValues:
     - {fileID: 1030891301}
     - {fileID: 712701662}
@@ -1709,6 +1727,45 @@ MonoBehaviour:
     - {fileID: 1322883883}
     - {fileID: 1446868351}
     - {fileID: 1014220612}
+  CarSpawners:
+    reorderableList:
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
+      isExpanded: 0
+      label:
+        m_Text: Keys
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 11400000, guid: 3d6785e46e940b843aa5fbe4ca729d60, type: 2}
+    isExpanded: 0
+    _keyValues:
+    - {fileID: 326618772}
+    - {fileID: 1258732743}
+    - {fileID: 1279430958}
+    - {fileID: 1315498499}
+    - {fileID: 1189281372}
+    - {fileID: 181722682}
+    _keys:
+    - {fileID: 326618772}
+    - {fileID: 1258732743}
+    - {fileID: 1279430958}
+    - {fileID: 1315498499}
+    - {fileID: 1189281372}
+    - {fileID: 181722682}
+    _values: 010000000200000003000000040000000300000004000000
+  GameEventManager: {fileID: 0}
 --- !u!114 &571438165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1722,6 +1779,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerCell: {fileID: 0}
+--- !u!114 &571438166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571438162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fccad2a4a4a36b4bb922885dede5825, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CoolDown: 2
+  _currentMotion: 0
+  OrientationActive: 0
 --- !u!1 &588868860
 GameObject:
   m_ObjectHideFlags: 0
@@ -2806,6 +2878,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 1d0000001e000000
+  CurrentlyWaitingForPizza: 0
 --- !u!1 &1021145480
 GameObject:
   m_ObjectHideFlags: 0
@@ -3546,6 +3619,96 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1196299040}
   m_CullTransparentMesh: 1
+--- !u!1 &1242678535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1242678536}
+  - component: {fileID: 1242678538}
+  - component: {fileID: 1242678537}
+  - component: {fileID: 1242678539}
+  m_Layer: 5
+  m_Name: TrafficLight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1242678536
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242678535}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1437245894}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 91.7, y: -78.7}
+  m_SizeDelta: {x: 30, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1242678537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242678535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 7357123456376359846, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1242678538
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242678535}
+  m_CullTransparentMesh: 1
+--- !u!114 &1242678539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242678535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dee66a2136a1064488b6f479bdd82dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Cooldown: 5
+  CurrentState: 0
 --- !u!1 &1258732742
 GameObject:
   m_ObjectHideFlags: 0
@@ -4022,6 +4185,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 190000001a000000
+  CurrentlyWaitingForPizza: 0
 --- !u!1 &1405728608
 GameObject:
   m_ObjectHideFlags: 0
@@ -4313,6 +4477,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 486615611}
+  - {fileID: 1890201420}
+  - {fileID: 1242678536}
   m_Father: {fileID: 742372319}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4477,6 +4643,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 1b0000001c000000
+  CurrentlyWaitingForPizza: 0
 --- !u!1 &1557992756
 GameObject:
   m_ObjectHideFlags: 0
@@ -4794,6 +4961,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 1700000018000000
+  CurrentlyWaitingForPizza: 0
 --- !u!1 &1718949861
 GameObject:
   m_ObjectHideFlags: 0
@@ -5338,6 +5506,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1862677610}
+  m_CullTransparentMesh: 1
+--- !u!1 &1890201419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1890201420}
+  - component: {fileID: 1890201422}
+  - component: {fileID: 1890201421}
+  m_Layer: 5
+  m_Name: PizzaShop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1890201420
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890201419}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1437245894}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -86.4, y: 10.7}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1890201421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890201419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2091829175261615561, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1890201422
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890201419}
   m_CullTransparentMesh: 1
 --- !u!1 &1899646142
 GameObject:

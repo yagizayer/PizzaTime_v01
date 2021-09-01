@@ -31,13 +31,14 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.D))
             _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Right);
         if (Input.GetKeyDown(KeyCode.E))
-            if (_gameManager.AllCustomers.Keys.Contains(PlayerCell.transform))
-                _eventManager.InvokePlayerKnockEvent(customer: _gameManager.AllCustomers[PlayerCell.transform]);
+            if (_gameManager.AllCustomers.Keys.Contains(PlayerCell.transform)) // there is a customer near player
+                if (_gameManager.AllCustomers[PlayerCell.transform].CurrentlyOpenedClosing == false) // customer is avaliable for interaction
+                    _eventManager.InvokePlayerKnockEvent(customer: _gameManager.AllCustomers[PlayerCell.transform]);
 
     }
     public void Move(CellDirection targetDirection)
     {
-        PositionCell targetCell = _map.GetNeighbor(PlayerCell.Column, PlayerCell.Row, targetDirection);
+        PositionCell targetCell = PlayerCell.GetNeighbor(targetDirection);
         if (targetCell && targetCell.PlaceFor.Contains(AcceptedEntities.Player))
         {
             HidePlayer();
