@@ -10,6 +10,10 @@ public class PositionCell : MonoBehaviour
     public List<AcceptedEntities> PlaceFor = new List<AcceptedEntities>(){
         AcceptedEntities.Player
     };
+    public AllSprites MyMainSprite;
+    public CellDirection TeleportPlayerOnInput = CellDirection.Null;
+    public CellDirection ForbidPlayerOnInput = CellDirection.Null;
+
 
     [HideInInspector]
     public int Row = -1;
@@ -23,6 +27,8 @@ public class PositionCell : MonoBehaviour
     {
         MyImage = GetComponent<Image>();
         _gameManager = FindObjectOfType<GameManager>();
+        if (MyMainSprite != AllSprites.Null)
+            MyImage.sprite = _gameManager.SpriteDatabase[MyMainSprite];
     }
     public PositionCell GetNeighbor(CellDirection targetCellDirection)
     {
@@ -43,5 +49,10 @@ public class PositionCell : MonoBehaviour
             default:
                 return null;
         }
+    }
+    public void ShowMainSprite()
+    {
+        if (MyMainSprite != AllSprites.Null)
+            MyImage.sprite = _gameManager.SpriteDatabase[MyMainSprite];
     }
 }

@@ -5,77 +5,103 @@ using UnityEngine.UI;
 using UnityEngine;
 using System;
 
+public class Car{
+    public PositionCell CarPosition;
+    public CarMotions CarMotion;
+    public Car(PositionCell carPosition, CarMotions carMotion)
+    {
+        CarPosition = carPosition;
+        CarMotion = carMotion;
+    }
+}
+
+
 public class CarsManager : MonoBehaviour
 {
-    public float CoolDown = 2;
-    public Orientation _currentMotion = Orientation.Vertical;
+    public float CarSpawnRate = 2;
+    public Orientation CurrentMotion = Orientation.Vertical;
     public bool OrientationActive = false;
     private CarSpawnerDict _spawners;
     private GameManager _gameManager;
     private EventManager _eventManager;
-    private List<(PositionCell, CarMotions)> _currentCars = new List<(PositionCell, CarMotions)>();
+    private PlayerManager _playerManager;
+    [HideInInspector]
+    public List<Car> CurrentCars = new List<Car>();
     private SerializableDictionaryBase<CarMotions, Sprite> _carSprites = new SerializableDictionaryBase<CarMotions, Sprite>();
 
     private void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
         _spawners = _gameManager.CarSpawners;
+        _playerManager = _gameManager.GamePlayerManager;
         _eventManager = _gameManager.GameEventManager;
         StartCoroutine(SpawnCar());
         _carSprites[CarMotions.LeftToRight] = _gameManager.SpriteDatabase[AllSprites.CarHorizontalToRight];
         _carSprites[CarMotions.RightToLeft] = _gameManager.SpriteDatabase[AllSprites.CarHorizontalToLeft];
         _carSprites[CarMotions.FrontToBack] = _gameManager.SpriteDatabase[AllSprites.CarVerticalToBack];
         _carSprites[CarMotions.BackToFront] = _gameManager.SpriteDatabase[AllSprites.CarVerticalToFront];
+
+        if (CarSpawnRate % _gameManager.TimeStep == 0)
+        {
+            Debug.LogWarning($"Car Spawn rate({CarSpawnRate}) is multpile of Timestep({_gameManager.TimeStep}), this will cause cars rapidly proceeding to second cell, giving player no room for dodge.\n Changing Car Spawn rate to : {CarSpawnRate - .01f}");
+            CarSpawnRate = CarSpawnRate - .01f;
+        }
+
+
     }
 
     private IEnumerator SpawnCar()
     {
         while (true)
         {
-            yield return new WaitForSecondsRealtime(CoolDown);
-            (PositionCell, CarMotions) spawnerCell = SelectRandomSpawner();
-            _currentCars.Add(spawnerCell);
-            ShowCar(spawnerCell.Item1, _carSprites[spawnerCell.Item2]);
+            yield return new WaitForSecondsRealtime(CarSpawnRate);
+            Car spawnerCell = SelectRandomSpawner();
+            CurrentCars.Add(spawnerCell);
+            ShowCar(spawnerCell.CarPosition, _carSprites[spawnerCell.CarMotion]);
         }
     }
 
-
     public void ProceedCars()
     {
-        List<(PositionCell, CarMotions)> carsToRemove = new List<(PositionCell, CarMotions)>();
-        for (int i = 0; i < _currentCars.Count; i++)
+        List<Car> carsToRemove = new List<Car>();
+        for (int i = 0; i < CurrentCars.Count; i++)
         {
-            (PositionCell, CarMotions) car = _currentCars[i];
+            Car car = CurrentCars[i];
             CellDirection direction = CellDirection.Right; // placeholder
 
-            if (car.Item2 == CarMotions.LeftToRight) direction = CellDirection.Right;
-            if (car.Item2 == CarMotions.RightToLeft) direction = CellDirection.Left;
-            if (car.Item2 == CarMotions.FrontToBack) direction = CellDirection.Next;
-            if (car.Item2 == CarMotions.BackToFront) direction = CellDirection.Previous;
+            if (car.CarMotion == CarMotions.LeftToRight) direction = CellDirection.Right; // to right
+            if (car.CarMotion == CarMotions.RightToLeft) direction = CellDirection.Left; // to left
+            if (car.CarMotion == CarMotions.FrontToBack) direction = CellDirection.Next; // to top
+            if (car.CarMotion == CarMotions.BackToFront) direction = CellDirection.Previous; // to bottom
 
-            if (car.Item1.GetNeighbor(direction))
+            if (car.CarPosition.GetNeighbor(direction))
             {
                 // not end of the road yet
-                HideCar(car.Item1);
-                car.Item1 = car.Item1.GetNeighbor(direction);
-                ShowCar(car.Item1, _carSprites[car.Item2]);
+                HideCar(car.CarPosition);
+                car.CarPosition = car.CarPosition.GetNeighbor(direction);
+                ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
+                if (car.CarPosition == _playerManager.PlayerCell)
+                {
+                    // collision detected
+                    _eventManager.InvokeMissEvent();
+                }
             }
             else
             {
                 // end of the road
-                HideCar(car.Item1);
+                HideCar(car.CarPosition);
                 carsToRemove.Add(car);
             }
-            _currentCars[i] = car;
+            CurrentCars[i] = car;
         }
-        foreach ((PositionCell, CarMotions) car in carsToRemove)
-            _currentCars.Remove(car);
+        foreach (Car car in carsToRemove)
+            CurrentCars.Remove(car);
     }
 
 
     //------------------------
 
-    private (PositionCell, CarMotions) SelectRandomSpawner()
+    private Car SelectRandomSpawner()
     {
         System.Random r = new System.Random();
         int haltControl = 0;
@@ -95,13 +121,13 @@ public class CarsManager : MonoBehaviour
                     // orientation control
                     if (OrientationActive)
                     {
-                        if (_currentMotion == Orientation.Vertical)
+                        if (CurrentMotion == Orientation.Vertical)
                             if (spawner.Value == CarMotions.LeftToRight || spawner.Value == CarMotions.RightToLeft) continue;
-                        if (_currentMotion == Orientation.Horizontal)
+                        if (CurrentMotion == Orientation.Horizontal)
                             if (spawner.Value == CarMotions.FrontToBack || spawner.Value == CarMotions.BackToFront) continue;
                     }
 
-                    return (spawner.Key.GetComponent<PositionCell>(), spawner.Value);
+                    return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value);
                 }
                 counter++;
             }

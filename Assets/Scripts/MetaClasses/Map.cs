@@ -12,14 +12,14 @@ public class Map : MonoBehaviour
     public List<List<PositionCell>> Cells = new List<List<PositionCell>>();
 
     internal (List<List<int>>, List<List<PositionCell>>) MapLayout = (new List<List<int>>(){
-        new List<int>(){0,0,0,0,1,0,0},// first column
-        new List<int>(){0,1,1,1,1,1,0},
-        new List<int>(){1,1,1,1,1,1,1},
-        new List<int>(){1,1,1,1,1,1,1},
-        new List<int>(){0,1,1,1,1,1,0},
-        new List<int>(){0,0,0,0,1,0,0} // last column
+        new List<int>(){0,0,0,1,0,0},// first column
+        new List<int>(){0,1,1,1,1,0},
+        new List<int>(){1,1,1,1,1,1},
+        new List<int>(){1,1,1,1,1,1},
+        new List<int>(){0,1,1,1,1,0},
+        new List<int>(){0,0,0,1,0,0} // last column
     }, new List<List<PositionCell>>());
-    public readonly (int, int) MapSize = (6, 5); // row,column
+    public readonly (int, int) MapSize = (5, 5); // row,column
     private void Start()
     {
         Cells = FillCells(AllColumns);
