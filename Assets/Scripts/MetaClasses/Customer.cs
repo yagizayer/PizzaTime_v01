@@ -14,10 +14,14 @@ public class Customer : MonoBehaviour
     public Image RelatedTimer;
     public SerializableDictionaryBase<Basic, AllSprites> MySprites = new SerializableDictionaryBase<Basic, AllSprites>();
 
+
+    [HideInInspector]
+    public float LastDeliveredTime;
     [HideInInspector]
     public bool CurrentlyWaitingForPizza = false;
     [HideInInspector]
     internal int RemainingTime = 8;
+
 
     private GameManager _gameManager;
     private EventManager _eventManager;

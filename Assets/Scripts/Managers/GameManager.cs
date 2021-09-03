@@ -58,7 +58,6 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(Tick());
     }
-
     private IEnumerator Tick()
     {
         while (true)
@@ -67,6 +66,8 @@ public class GameManager : MonoBehaviour
             GameEventManager.InvokeTickEvent();
         }
     }
+
+    //-------------
 
     public void TakePizza(Customer customer)
     {
@@ -116,13 +117,11 @@ public class GameManager : MonoBehaviour
 
         RespawnPlayer();
     }
-
     public void AnimateHealthReduce()
     {
         Image imageToAnimate = _healthImages[_currentHealth];
         imageToAnimate.GetComponent<Animator>().enabled = true;
     }
-
     public void ReturnMainMenu()
     {
         SceneManager.LoadScene("MainMenu");

@@ -395,6 +395,30 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 571438167}
+        m_TargetAssemblyTypeName: CustomersManager, Assembly-CSharp
+        m_MethodName: ProceedCustomerTimers
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 571438167}
+        m_TargetAssemblyTypeName: CustomersManager, Assembly-CSharp
+        m_MethodName: SpawnDeliveryOnChance
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   PlayerMovementEvent:
     m_PersistentCalls:
       m_Calls:
@@ -1888,6 +1912,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b5b061ef9965624f92ca195deabb5a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Cooldown: 5
+  _percentage: 5
 --- !u!1 &588868860
 GameObject:
   m_ObjectHideFlags: 0
@@ -3088,6 +3114,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 1d0000001e000000
+  LastDeliveredTime: 0
   CurrentlyWaitingForPizza: 0
 --- !u!1 &1030891300
 GameObject:
@@ -4324,6 +4351,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 190000001a000000
+  LastDeliveredTime: 0
   CurrentlyWaitingForPizza: 0
 --- !u!1 &1405728608
 GameObject:
@@ -4785,6 +4813,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 1b0000001c000000
+  LastDeliveredTime: 0
   CurrentlyWaitingForPizza: 0
 --- !u!1 &1557992756
 GameObject:
@@ -5234,6 +5263,7 @@ MonoBehaviour:
     _keyValues: 0100000002000000
     _keys: 0100000002000000
     _values: 1700000018000000
+  LastDeliveredTime: 0
   CurrentlyWaitingForPizza: 0
 --- !u!1 &1718949861
 GameObject:
