@@ -17,9 +17,7 @@ public class PositionCell : MonoBehaviour
     public CellDirection ForbidPlayerOnInput = CellDirection.Null;
 
 
-    [HideInInspector]
     public int Row = -1;
-    [HideInInspector]
     public int Column = -1;
     [HideInInspector]
     public Image MyImage;
@@ -34,14 +32,15 @@ public class PositionCell : MonoBehaviour
     }
     public PositionCell GetNeighbor(CellDirection targetCellDirection)
     {
+        Debug.Log(transform.name + " : " + targetCellDirection);
         switch (targetCellDirection)
         {
             case CellDirection.Next:
-                if (Row + 1 > _gameManager.GameMap.MapSize.Item1) return null;
-                return _gameManager.GameMap.MapLayout.Item2[Column][Row + 1];
-            case CellDirection.Previous:
                 if (Row - 1 < 0) return null;
                 return _gameManager.GameMap.MapLayout.Item2[Column][Row - 1];
+            case CellDirection.Previous:
+                if (Row + 1 > _gameManager.GameMap.MapSize.Item1) return null;
+                return _gameManager.GameMap.MapLayout.Item2[Column][Row + 1];
             case CellDirection.Left:
                 if (Column - 1 < 0) return null;
                 return _gameManager.GameMap.MapLayout.Item2[Column - 1][Row];

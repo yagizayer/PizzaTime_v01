@@ -17,34 +17,42 @@ public class EventManager : MonoBehaviour
 
     public void InvokeMenuMovementEvent(CellDirection direction)
     {
+        Debug.Log("MenuMovementEvent fired");
         MenuMovementEvent.Invoke(direction);
     }
     public void InvokeMenuSelectEvent()
     {
+        Debug.Log("MenuSelectEvent fired");
         MenuSelectEvent.Invoke();
     }
     public void InvokePlayerMovementEvent(CellDirection direction)
     {
+        Debug.Log("PlayerMovementEvent fired");
         PlayerMovementEvent.Invoke(direction);
     }
     public void InvokePlayerKnockEvent(Customer customer)
     {
+        Debug.Log("PlayerKnockEvent fired");
         PlayerKnockEvent.Invoke(customer);
     }
     public void InvokeTickEvent()
     {
+        Debug.Log("TickEvent fired");
         TickEvent.Invoke();
     }
     public void InvokeDeliverEvent(Customer customer)
     {
+        Debug.Log("DeliverEvent fired");
         DeliverEvent.Invoke(customer);
     }
     public void InvokeMissEvent()
     {
+        Debug.Log("MissEvent fired");
         MissEvent.Invoke();
     }
     public void InvokeGameEndedEvent()
     {
+        Debug.Log("GameEndedEvent fired");
         GameEndedEvent.Invoke();
     }
 

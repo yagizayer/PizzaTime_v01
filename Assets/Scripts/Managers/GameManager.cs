@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 [System.Serializable]
 public class CellToCustomer : SerializableDictionaryBase<Transform, Customer> { }
@@ -21,8 +22,10 @@ public class GameManager : MonoBehaviour
     public bool IsGameRunning = true;
     [Header("Map Variables")]
     public Map GameMap;
+    [SerializeField] private Animator AngryBoss;
     [Header("Player Variables")]
     public PositionCell StartingPosition;
+    [HideInInspector]
     public PlayerManager GamePlayerManager;
     [Header("Customer Variables")]
     [SerializeField] private CellToCustomer _allCustomers = new CellToCustomer();
@@ -147,5 +150,25 @@ public class GameManager : MonoBehaviour
     {
         if (TimeStep >= .1f)
             TimeStep -= DifficultyIncreasePerPoint;
+    }
+    public void PauseGame()
+    {
+        StartCoroutine(PausingGame());
+    }
+    private IEnumerator PausingGame()
+    {
+        StopGame();
+        yield return new WaitForSecondsRealtime(3);
+        StartGame();
+    }
+
+    public void AnimateAngryManager()
+    {
+        StartCoroutine(AnimatingAngryManager());
+    }
+
+    private IEnumerator AnimatingAngryManager()
+    {
+        yield return null;
     }
 }
