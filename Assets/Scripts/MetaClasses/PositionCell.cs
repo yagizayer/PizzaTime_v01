@@ -11,7 +11,9 @@ public class PositionCell : MonoBehaviour
         AcceptedEntities.Player
     };
     public AllSprites MyMainSprite;
-    public CellDirection TeleportPlayerOnInput = CellDirection.Null;
+    public List<CellDirection> TeleportPlayerOnInput = new List<CellDirection>() {
+        CellDirection.Null
+    };
     public CellDirection ForbidPlayerOnInput = CellDirection.Null;
 
 

@@ -5,13 +5,24 @@ using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
+    [SerializeField] private UnityEvent<CellDirection> MenuMovementEvent = new UnityEvent<CellDirection>();
+    [SerializeField] private UnityEvent MenuSelectEvent = new UnityEvent();
     [SerializeField] private UnityEvent TickEvent = new UnityEvent();
     [SerializeField] private UnityEvent<CellDirection> PlayerMovementEvent = new UnityEvent<CellDirection>();
     [SerializeField] private UnityEvent<Customer> PlayerKnockEvent = new UnityEvent<Customer>();
+    [SerializeField] private UnityEvent<Customer> DeliverEvent = new UnityEvent<Customer>();
     [SerializeField] private UnityEvent MissEvent = new UnityEvent();
     [SerializeField] private UnityEvent GameEndedEvent = new UnityEvent();
 
 
+    public void InvokeMenuMovementEvent(CellDirection direction)
+    {
+        MenuMovementEvent.Invoke(direction);
+    }
+    public void InvokeMenuSelectEvent()
+    {
+        MenuSelectEvent.Invoke();
+    }
     public void InvokePlayerMovementEvent(CellDirection direction)
     {
         PlayerMovementEvent.Invoke(direction);
@@ -23,6 +34,10 @@ public class EventManager : MonoBehaviour
     public void InvokeTickEvent()
     {
         TickEvent.Invoke();
+    }
+    public void InvokeDeliverEvent(Customer customer)
+    {
+        DeliverEvent.Invoke(customer);
     }
     public void InvokeMissEvent()
     {

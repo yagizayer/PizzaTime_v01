@@ -23,26 +23,32 @@ public class PlayerManager : MonoBehaviour
         PlayerCell = _gameManager.StartingPosition;
         ShowPlayer();
     }
-
     private void Update()
     {
-        if (IsMoveable == false)
-            return;
+        if (_gameManager.IsGameRunning)
+        {
+            if (IsMoveable == false)
+                return;
 
-        if (Input.GetKeyDown(KeyCode.W))
-            _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Next);
-        if (Input.GetKeyDown(KeyCode.S))
-            _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Previous);
-        if (Input.GetKeyDown(KeyCode.A))
-            _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Left);
-        if (Input.GetKeyDown(KeyCode.D))
-            _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Right);
-        if (Input.GetKeyDown(KeyCode.E))
-            if (_gameManager.AllCustomers.Keys.Contains(PlayerCell.transform)) // there is a customer near player
-                if (_gameManager.AllCustomers[PlayerCell.transform].CurrentlyOpenedClosing == false) // customer is avaliable for interaction
-                    _eventManager.InvokePlayerKnockEvent(customer: _gameManager.AllCustomers[PlayerCell.transform]);
+            // Gameplay Movements
+            if (Input.GetKeyDown(KeyCode.W))
+                _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Next);
+            if (Input.GetKeyDown(KeyCode.S))
+                _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Previous);
+            if (Input.GetKeyDown(KeyCode.A))
+                _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Left);
+            if (Input.GetKeyDown(KeyCode.D))
+                _eventManager.InvokePlayerMovementEvent(direction: CellDirection.Right);
+            if (Input.GetKeyDown(KeyCode.E))
+                if (_gameManager.AllCustomers.Keys.Contains(PlayerCell.transform)) // there is a customer near player
+                    if (_gameManager.AllCustomers[PlayerCell.transform].CurrentlyOpenedClosing == false) // customer is avaliable for interaction
+                        _eventManager.InvokePlayerKnockEvent(customer: _gameManager.AllCustomers[PlayerCell.transform]);
+        }
 
     }
+
+    //----------------
+
     public void Move(CellDirection targetDirection)
     {
         PositionCell targetCell = PlayerCell.GetNeighbor(targetDirection);
@@ -57,7 +63,7 @@ public class PlayerManager : MonoBehaviour
             return;
 
         // in case of skipping a cell
-        if (targetCell.TeleportPlayerOnInput == targetDirection || PlayerCell.TeleportPlayerOnInput == targetDirection)
+        if (targetCell.TeleportPlayerOnInput.Contains(targetDirection) || PlayerCell.TeleportPlayerOnInput.Contains(targetDirection))
             targetCell = targetCell.GetNeighbor(targetDirection);
 
         if (targetCell.PlaceFor.Contains(AcceptedEntities.Player))
@@ -68,12 +74,17 @@ public class PlayerManager : MonoBehaviour
             // ShowPlayer(targetDirection, targetCell); // old code (Dynamic Sprites for each Image)
         }
 
+        // collision detection
         foreach (Car car in _carsManager.CurrentCars)
             if (car.CarPosition == PlayerCell)
                 _eventManager.InvokeMissEvent();
 
     }
-
+    public void GivePizza(Customer customer)
+    {
+        if (customer.CurrentlyWaitingForPizza)
+            _eventManager.InvokeDeliverEvent(customer);
+    }
 
     //-----------------
 

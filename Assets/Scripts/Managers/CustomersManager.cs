@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class CustomersManager : MonoBehaviour
 {
-    [SerializeField] private float Cooldown = 5;
+    [SerializeField] private float Cooldown = 3;
     [SerializeField, Range(.01f, 100f)] private float _percentage = 5;
 
     private List<Customer> _allCustomers = new List<Customer>();
     private GameManager _gameManager;
+    private EventManager _eventManager;
 
     private void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
+        _eventManager = _gameManager.GameEventManager;
         foreach (KeyValuePair<Transform, Customer> customer in _gameManager.AllCustomers)
             _allCustomers.Add(customer.Value);
 
@@ -21,21 +23,9 @@ public class CustomersManager : MonoBehaviour
 
     }
 
-    private void InitializeCustomers()
-    {
-        foreach (Customer customer in _allCustomers)
-        {
-            customer.LastDeliveredTime = Time.time;
-        }
-    }
+    //---------------
 
-    private void SpawnDelivery(Customer customer)
-    {
-        customer.CurrentlyWaitingForPizza = true;
-        customer.RelatedTimer.enabled = true;
-    }
-
-    public void SpawnDeliveryOnChance() // TODO : burda kaldın : timer image göster
+    public void SpawnDeliveryOnChance()
     {
         foreach (Customer customer in _allCustomers)
         {
@@ -43,20 +33,49 @@ public class CustomersManager : MonoBehaviour
                 continue;
             if (customer.CurrentlyWaitingForPizza)
                 continue;
-            System.Random r = new System.Random();
-            if (r.Next(0, 100) < _percentage)
+
+            if (UnityEngine.Random.Range(0, 100) < _percentage)
                 SpawnDelivery(customer);
         }
     }
-
     public void ProceedCustomerTimers()
     {
         foreach (Customer customer in _allCustomers)
         {
-            if(customer.CurrentlyWaitingForPizza){
+            if (customer.CurrentlyWaitingForPizza)
+            {
                 customer.ProceedTimer();
             }
         }
     }
+    public void PizzaReceived(Customer customer)
+    {
+        customer.CurrentlyWaitingForPizza = false;
+        customer.LastDeliveredTime = Time.time;
+        customer.RemainingTime = 8;
+        customer.HideTimer();
+    }
+    public void ClearAllDeliveries()
+    {
+        foreach (Customer customer in _allCustomers)
+        {
+            customer.CancelDelivery();
+        }
+    }
+    
+    
+    //---------------
+
+    private void InitializeCustomers()
+    {
+        foreach (Customer customer in _allCustomers)
+            customer.LastDeliveredTime = Time.time;
+    }
+    private void SpawnDelivery(Customer customer)
+    {
+        customer.CurrentlyWaitingForPizza = true;
+        customer.ShowTimer();
+    }
+    
 
 }

@@ -66,4 +66,23 @@ public class Customer : MonoBehaviour
                 break;
         }
     }
+
+    public void CancelDelivery()
+    {
+        CurrentlyWaitingForPizza = false;
+        LastDeliveredTime = Time.time;
+        RemainingTime = 8;
+        HideTimer();
+    }
+
+
+
+    public void ShowTimer()
+    {
+        RelatedTimer.enabled = true;
+    }
+    public void HideTimer()
+    {
+        RelatedTimer.enabled = false;
+    }
 }

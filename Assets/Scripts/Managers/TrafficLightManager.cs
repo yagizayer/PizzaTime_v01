@@ -21,6 +21,8 @@ public class TrafficLightManager : MonoBehaviour
         _eventManager = _gameManager.GameEventManager;
         _carsManager = _gameManager.GameCarsManager;
         _myImage = GetComponent<Image>();
+
+        if (_gameManager.Mode == GameMode.B) _percentage = 0;
         ChangeDirection();
     }
 

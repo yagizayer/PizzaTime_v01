@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using UnityEngine;
 using System;
 
-public class Car{
+public class Car
+{
     public PositionCell CarPosition;
     public CarMotions CarMotion;
     public Car(PositionCell carPosition, CarMotions carMotion)
@@ -35,7 +36,10 @@ public class CarsManager : MonoBehaviour
         _spawners = _gameManager.CarSpawners;
         _playerManager = _gameManager.GamePlayerManager;
         _eventManager = _gameManager.GameEventManager;
-        StartCoroutine(SpawnCar());
+
+        if (_gameManager.IsGameRunning)
+            StartCoroutine(SpawnCar());
+
         _carSprites[CarMotions.LeftToRight] = _gameManager.SpriteDatabase[AllSprites.CarHorizontalToRight];
         _carSprites[CarMotions.RightToLeft] = _gameManager.SpriteDatabase[AllSprites.CarHorizontalToLeft];
         _carSprites[CarMotions.FrontToBack] = _gameManager.SpriteDatabase[AllSprites.CarVerticalToBack];
@@ -52,13 +56,18 @@ public class CarsManager : MonoBehaviour
 
     private IEnumerator SpawnCar()
     {
-        while (true)
+        while (_gameManager.IsGameRunning)
         {
             yield return new WaitForSecondsRealtime(CarSpawnRate);
             Car spawnerCell = SelectRandomSpawner();
             CurrentCars.Add(spawnerCell);
             ShowCar(spawnerCell.CarPosition, _carSprites[spawnerCell.CarMotion]);
         }
+    }
+
+    public void StopCarSpawning()
+    {
+        StopCoroutine(SpawnCar());
     }
 
     public void ProceedCars()
