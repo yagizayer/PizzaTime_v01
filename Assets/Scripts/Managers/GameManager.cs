@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public GameMode Mode = GameMode.A;
     [Tooltip("How many seconds should pass each game update")]
     [Range(.001f, 5)] public float TimeStep = 1;
-    [Range(.001f, 5)] public float DifficultyIncreasePerPoint = .05f;
+    [Range(.001f, .01f)] public float DifficultyIncreasePerPoint = .05f;
     [Tooltip("Forgiveness for players late dodges (higher is easier to dodge)")]
     [SerializeField, Range(.01f, 5f)] private float _collisionDetectionDelay = .1f;
     public bool IsGameRunning = true;
@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
     }
     public void IncreaseDifficulty()
     {
-        if (TimeStep >= .2f)
+        if (TimeStep >= .1f)
             TimeStep -= DifficultyIncreasePerPoint;
     }
 }
