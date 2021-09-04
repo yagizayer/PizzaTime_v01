@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public PositionCell PlayerCell;
+    [SerializeField, Range(.01f, 1)] private float _fickerEffectDuration = .1f;
     private EventManager _eventManager;
     private GameManager _gameManager;
     private CarsManager _carsManager;
@@ -68,16 +69,13 @@ public class PlayerManager : MonoBehaviour
 
         if (targetCell.PlaceFor.Contains(AcceptedEntities.Player))
         {
-            HidePlayer();
-            PlayerCell = targetCell;
-            ShowPlayer();
+            StartCoroutine(ShowHidePlayer(targetCell));
             // ShowPlayer(targetDirection, targetCell); // old code (Dynamic Sprites for each Image)
         }
 
         // collision detection
         foreach (Car car in _carsManager.CurrentCars)
-            if (car.CarPosition == PlayerCell)
-                _eventManager.InvokeMissEvent();
+            StartCoroutine(_gameManager.CheckCollisionLater());
 
     }
     public void GivePizza(Customer customer)
@@ -88,6 +86,14 @@ public class PlayerManager : MonoBehaviour
 
     //-----------------
 
+    private IEnumerator ShowHidePlayer(PositionCell targetCell)
+    {
+        PositionCell tempCell = PlayerCell;
+        PlayerCell = targetCell;
+        ShowPlayer();
+        yield return new WaitForSecondsRealtime(_fickerEffectDuration);
+        HidePlayer(tempCell);
+    }
 
     public void ShowPlayer()
     {
@@ -150,40 +156,32 @@ public class PlayerManager : MonoBehaviour
     // }
     #endregion
 
+    public void HidePlayer(PositionCell targetCell)
+    {
+        targetCell.MyImage.enabled = false;
+        targetCell.MyImage.preserveAspect = false;
+    }
+
     public void HidePlayer()
     {
         // PlayerCell.MyImage.sprite = null; // old code (Dynamic Sprites for each Image)
         PlayerCell.MyImage.enabled = false;
         PlayerCell.MyImage.preserveAspect = false;
     }
-    public void RotatePlayerToCustomer(Customer customer)
-    {
-        if (customer.CustomerNo == 1)// top right
-        {
-            PlayerCell.MyImage.sprite = _gameManager.SpriteDatabase[AllSprites.PlayerStandingRight_1];
-            PlayerCell.MyImage.enabled = true;
-            PlayerCell.MyImage.preserveAspect = true;
-        }
-        if (customer.CustomerNo == 2)// bottom right
-        {
-            PlayerCell.MyImage.sprite = _gameManager.SpriteDatabase[AllSprites.PlayerStandingRight_2];
-            PlayerCell.MyImage.enabled = true;
-            PlayerCell.MyImage.preserveAspect = true;
-        }
-        if (customer.CustomerNo == 3)// bottom left
-        {
-            PlayerCell.MyImage.sprite = _gameManager.SpriteDatabase[AllSprites.PlayerStandingLeft_2];
-            PlayerCell.MyImage.enabled = true;
-            PlayerCell.MyImage.preserveAspect = true;
-        }
-        if (customer.CustomerNo == 4)// top left
-        {
-            PlayerCell.MyImage.sprite = _gameManager.SpriteDatabase[AllSprites.PlayerStandingLeft_1];
-            PlayerCell.MyImage.enabled = true;
-            PlayerCell.MyImage.preserveAspect = true;
-        }
 
+    public void RespawnPlayer()
+    {
+        StartCoroutine(RespawningPlayer());
     }
+    private IEnumerator RespawningPlayer()
+    {
+        IsMoveable = false;
+        PlayerCell = _gameManager.StartingPosition;
+        yield return new WaitForSecondsRealtime(1.5f);
+        ShowPlayer();
+        IsMoveable = true;
+    }
+
 
 
 }

@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
     public GameMode Mode = GameMode.A;
     [Tooltip("How many seconds should pass each game update")]
     [Range(.001f, 5)] public float TimeStep = 1;
+    [Range(.001f, 5)] public float DifficultyIncreasePerPoint = .05f;
+    [Tooltip("Forgiveness for players late dodges (higher is easier to dodge)")]
+    [SerializeField, Range(.01f, 5f)] private float _collisionDetectionDelay = .1f;
     public bool IsGameRunning = true;
     [Header("Map Variables")]
     public Map GameMap;
@@ -80,6 +83,13 @@ public class GameManager : MonoBehaviour
 
     //-------------
 
+    public IEnumerator CheckCollisionLater()
+    {
+        yield return new WaitForSecondsRealtime(_collisionDetectionDelay);
+        foreach (Car car in GameCarsManager.CurrentCars)
+            if (car.CarPosition == GamePlayerManager.PlayerCell)
+                GameEventManager.InvokeMissEvent();
+    }
     public void TakePizza(Customer customer)
     {
         if (customer.CurrentlyOpenedClosing == false) // not open
@@ -101,34 +111,19 @@ public class GameManager : MonoBehaviour
         customerImage.sprite = SpriteDatabase[customerSpriteKey_Off];
         customer.CurrentlyOpenedClosing = false;
     }
-    private void RespawnPlayer()
-    {
-        StartCoroutine(RespawningPlayer());
-    }
-    private IEnumerator RespawningPlayer()
-    {
-        GamePlayerManager.IsMoveable = false;
-        yield return new WaitForSecondsRealtime(1.5f);
-        GamePlayerManager.PlayerCell = StartingPosition;
-        GamePlayerManager.ShowPlayer();
-        GamePlayerManager.IsMoveable = true;
-    }
     public void ReduceHealth()
     {
+
         if (_currentHealth == 0) return;
 
         --_currentHealth;
 
-        GamePlayerManager.PlayerCell = StartingPosition;
-        GamePlayerManager.IsMoveable = false;
 
         if (_currentHealth == 0)
         {
             GameEventManager.InvokeGameEndedEvent();
             return;
         }
-
-        RespawnPlayer();
     }
     public void AnimateHealthReduce()
     {
@@ -147,5 +142,10 @@ public class GameManager : MonoBehaviour
         if (_totalPoint < 99) point += "0";
         point += _totalPoint.ToString();
         _totalPointUI.text = point;
+    }
+    public void IncreaseDifficulty()
+    {
+        if (TimeStep >= .2f)
+            TimeStep -= DifficultyIncreasePerPoint;
     }
 }

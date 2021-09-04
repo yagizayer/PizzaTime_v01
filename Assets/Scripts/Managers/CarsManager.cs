@@ -22,6 +22,7 @@ public class CarsManager : MonoBehaviour
     public float CarSpawnRate = 2;
     public Orientation CurrentMotion = Orientation.Vertical;
     public bool OrientationActive = false;
+    [SerializeField, Range(.01f, 1)] private float _fickerEffectDuration = .1f;
     private CarSpawnerDict _spawners;
     private GameManager _gameManager;
     private EventManager _eventManager;
@@ -89,11 +90,7 @@ public class CarsManager : MonoBehaviour
                 HideCar(car.CarPosition);
                 car.CarPosition = car.CarPosition.GetNeighbor(direction);
                 ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
-                if (car.CarPosition == _playerManager.PlayerCell)
-                {
-                    // collision detected
-                    _eventManager.InvokeMissEvent();
-                }
+                StartCoroutine(_gameManager.CheckCollisionLater());
             }
             else
             {
@@ -150,6 +147,12 @@ public class CarsManager : MonoBehaviour
     }
     public void HideCar(PositionCell targetCell)
     {
+        StartCoroutine(HidingCar(targetCell));
+    }
+
+    private IEnumerator HidingCar(PositionCell targetCell)
+    {
+        yield return new WaitForSecondsRealtime(_fickerEffectDuration);
         targetCell.MyImage.sprite = null;
         targetCell.MyImage.enabled = false;
         targetCell.MyImage.preserveAspect = false;
