@@ -193,7 +193,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EndingGame()
     {
-        yield return new WaitForSecondsRealtime(5);
+        yield return new WaitForSecondsRealtime(3);
         ChangeScene("MainMenu");
     }
 }

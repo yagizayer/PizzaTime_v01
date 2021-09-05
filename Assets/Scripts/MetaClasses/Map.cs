@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Helper;
 
 
 public class Map : MonoBehaviour
@@ -25,10 +24,16 @@ public class Map : MonoBehaviour
 
     private List<List<PositionCell>> FillCells(List<Transform> columns)
     {
+
         // Fill Cells
         List<List<PositionCell>> result = new List<List<PositionCell>>();
         foreach (Transform column in columns)
-            result.Add(column.GetComponentsInChildren<PositionCell>().ToList());
+        {
+            List<PositionCell> tempList = new List<PositionCell>();
+            foreach (PositionCell item in column.GetComponentsInChildren<PositionCell>())
+                tempList.Add(item);
+            result.Add(tempList);
+        }
 
         // Fill MapLayout.Item2
         for (int columnNo = 0; columnNo < MapLayout.Item1.Count; columnNo++)
