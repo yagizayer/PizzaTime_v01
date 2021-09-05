@@ -91,6 +91,18 @@ public class CarsManager : MonoBehaviour
             if (car.CarPosition.GetNeighbor(direction))
             {
                 // not end of the road yet
+
+
+                // orientation control
+                if (OrientationActive)
+                {
+                    if (CurrentMotion == Orientation.Vertical)
+                        if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft) continue;
+                    if (CurrentMotion == Orientation.Horizontal)
+                        if (car.CarMotion == CarMotions.FrontToBack || car.CarMotion == CarMotions.BackToFront) continue;
+                }
+
+                // proceeding part
                 HideCar(car.CarPosition);
                 car.CarPosition = car.CarPosition.GetNeighbor(direction);
                 ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
@@ -129,13 +141,13 @@ public class CarsManager : MonoBehaviour
                 if (selectedSpawnerIndex == counter)
                 {
                     // orientation control
-                    if (OrientationActive)
-                    {
-                        if (CurrentMotion == Orientation.Vertical)
-                            if (spawner.Value == CarMotions.LeftToRight || spawner.Value == CarMotions.RightToLeft) continue;
-                        if (CurrentMotion == Orientation.Horizontal)
-                            if (spawner.Value == CarMotions.FrontToBack || spawner.Value == CarMotions.BackToFront) continue;
-                    }
+                    // if (OrientationActive)
+                    // {
+                    //     if (CurrentMotion == Orientation.Vertical)
+                    //         if (spawner.Value == CarMotions.LeftToRight || spawner.Value == CarMotions.RightToLeft) continue;
+                    //     if (CurrentMotion == Orientation.Horizontal)
+                    //         if (spawner.Value == CarMotions.FrontToBack || spawner.Value == CarMotions.BackToFront) continue;
+                    // }
 
                     return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value);
                 }
