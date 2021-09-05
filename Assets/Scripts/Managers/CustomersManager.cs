@@ -40,6 +40,8 @@ public class CustomersManager : MonoBehaviour
     }
     public void ProceedCustomerTimers()
     {
+        if (_gameManager.CurrentGameState != GameState.Started)
+            return;
         foreach (Customer customer in _allCustomers)
         {
             if (customer.CurrentlyWaitingForPizza)
@@ -57,13 +59,16 @@ public class CustomersManager : MonoBehaviour
     }
     public void ClearAllDeliveries()
     {
-        foreach (Customer customer in _allCustomers)
-        {
-            customer.CancelDelivery();
-        }
+        StartCoroutine(ClearingDeliveries());
     }
-    
-    
+    private IEnumerator ClearingDeliveries()
+    {
+        yield return new WaitForSecondsRealtime(3);
+        foreach (Customer customer in _allCustomers)
+            customer.CancelDelivery();
+    }
+
+
     //---------------
 
     private void InitializeCustomers()
@@ -76,6 +81,6 @@ public class CustomersManager : MonoBehaviour
         customer.CurrentlyWaitingForPizza = true;
         customer.ShowTimer();
     }
-    
+
 
 }

@@ -32,7 +32,6 @@ public class PositionCell : MonoBehaviour
     }
     public PositionCell GetNeighbor(CellDirection targetCellDirection)
     {
-        Debug.Log(transform.name + " : " + targetCellDirection);
         switch (targetCellDirection)
         {
             case CellDirection.Next:

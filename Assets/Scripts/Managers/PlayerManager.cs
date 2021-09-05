@@ -26,7 +26,7 @@ public class PlayerManager : MonoBehaviour
     }
     private void Update()
     {
-        if (_gameManager.IsGameRunning)
+        if (_gameManager.CurrentGameState == GameState.Started)
         {
             if (IsMoveable == false)
                 return;
@@ -177,7 +177,7 @@ public class PlayerManager : MonoBehaviour
     {
         IsMoveable = false;
         PlayerCell = _gameManager.StartingPosition;
-        yield return new WaitForSecondsRealtime(1.5f);
+        yield return new WaitForSecondsRealtime(3f);
         ShowPlayer();
         IsMoveable = true;
     }

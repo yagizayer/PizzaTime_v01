@@ -7,7 +7,6 @@ using Helper;
 public class Map : MonoBehaviour
 {
     [SerializeField] private List<Transform> AllColumns;
-    [SerializeField] private float PerspectiveRatio = .1f;
     [HideInInspector]
     public List<List<PositionCell>> Cells = new List<List<PositionCell>>();
 
@@ -22,7 +21,6 @@ public class Map : MonoBehaviour
     {
         Cells = FillCells(AllColumns);
         FillNeighbors();
-        // MakePerspective(PerspectiveRatio);
     }
 
     private List<List<PositionCell>> FillCells(List<Transform> columns)
@@ -82,19 +80,6 @@ public class Map : MonoBehaviour
             }
         }
     }
-
-    private void MakePerspective(float perspectiveRatio)
-    {
-        for (int columnNo = 0; columnNo < MapLayout.Item2.Count; columnNo++)
-            for (int rowNo = 0; rowNo < MapLayout.Item2[columnNo].Count; rowNo++)
-            {
-                // if there is a cell at present
-                PositionCell me = MapLayout.Item2[columnNo][rowNo];
-                if (me)
-                    me.GetComponent<RectTransform>().localScale -= Vector3.one * rowNo * perspectiveRatio;
-            }
-    }
-
 
 
 }

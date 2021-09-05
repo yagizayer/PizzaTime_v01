@@ -38,9 +38,6 @@ public class CarsManager : MonoBehaviour
         _playerManager = _gameManager.GamePlayerManager;
         _eventManager = _gameManager.GameEventManager;
 
-        if (_gameManager.IsGameRunning)
-            StartCoroutine(SpawnCar());
-
         _carSprites[CarMotions.LeftToRight] = _gameManager.SpriteDatabase[AllSprites.CarHorizontalToRight];
         _carSprites[CarMotions.RightToLeft] = _gameManager.SpriteDatabase[AllSprites.CarHorizontalToLeft];
         _carSprites[CarMotions.FrontToBack] = _gameManager.SpriteDatabase[AllSprites.CarVerticalToBack];
@@ -57,9 +54,10 @@ public class CarsManager : MonoBehaviour
 
     private IEnumerator SpawnCar()
     {
-        while (_gameManager.IsGameRunning)
+        while (true)
         {
             yield return new WaitForSecondsRealtime(CarSpawnRate);
+            if (_gameManager.CurrentGameState != GameState.Started) continue;
             Car spawnerCell = SelectRandomSpawner();
             CurrentCars.Add(spawnerCell);
             ShowCar(spawnerCell.CarPosition, _carSprites[spawnerCell.CarMotion]);
@@ -70,9 +68,15 @@ public class CarsManager : MonoBehaviour
     {
         StopCoroutine(SpawnCar());
     }
+    public void StartCarSpawning()
+    {
+        StartCoroutine(SpawnCar());
+    }
 
     public void ProceedCars()
     {
+        if (_gameManager.CurrentGameState != GameState.Started)
+            return;
         List<Car> carsToRemove = new List<Car>();
         for (int i = 0; i < CurrentCars.Count; i++)
         {
@@ -149,7 +153,6 @@ public class CarsManager : MonoBehaviour
     {
         StartCoroutine(HidingCar(targetCell));
     }
-
     private IEnumerator HidingCar(PositionCell targetCell)
     {
         yield return new WaitForSecondsRealtime(_fickerEffectDuration);

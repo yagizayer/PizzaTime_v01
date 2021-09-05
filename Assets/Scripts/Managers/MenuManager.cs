@@ -16,13 +16,13 @@ public class MenuManager : MonoBehaviour
     {
         _gameManager = FindObjectOfType<GameManager>();
         _eventManager = _gameManager.GameEventManager;
-        if(_gameManager.IsGameRunning == false)
+        if(_gameManager.CurrentGameState == GameState.Ended)
             InitializeMenu();
     }
 
     void Update()
     {
-        if (_gameManager.IsGameRunning == false)
+        if (_gameManager.CurrentGameState == GameState.Ended)
         {
             // Menu Movements
             if (Input.GetKeyDown(KeyCode.W))

@@ -62,7 +62,7 @@ public class Customer : MonoBehaviour
                 RelatedTimer.sprite = _gameManager.SpriteDatabase[AllSprites.Watch_0];
                 CurrentlyWaitingForPizza = false;
                 RemainingTime = 8;
-                _eventManager.InvokeMissEvent();
+                _eventManager.InvokeMissEvent(RelatedTimer);
                 break;
         }
     }

@@ -19,10 +19,9 @@ public class GameManager : MonoBehaviour
     [Range(.001f, .01f)] public float DifficultyIncreasePerPoint = .05f;
     [Tooltip("Forgiveness for players late dodges (higher is easier to dodge)")]
     [SerializeField, Range(.01f, 5f)] private float _collisionDetectionDelay = .1f;
-    public bool IsGameRunning = true;
+    public GameState CurrentGameState = GameState.Started;
     [Header("Map Variables")]
     public Map GameMap;
-    [SerializeField] private Animator AngryBoss;
     [Header("Player Variables")]
     public PositionCell StartingPosition;
     [HideInInspector]
@@ -34,11 +33,13 @@ public class GameManager : MonoBehaviour
     public CarSpawnerDict CarSpawners = new CarSpawnerDict();
 
     [Header("User Interface Variables")]
-    [SerializeField] private List<Image> _healthImages = new List<Image>();
-    [SerializeField] private int _currentHealth = 3;
+    public List<Image> HealthImages = new List<Image>();
+    internal int CurrentHealth = 3;
     [SerializeField] private Text _totalPointUI;
     [SerializeField] private int _totalPoint = 0;
 
+    [Header("Other Variables")]
+    [SerializeField] private AnimationManager GameAnimationManager;
 
     [HideInInspector]
     public EventManager GameEventManager;
@@ -57,33 +58,46 @@ public class GameManager : MonoBehaviour
         GameCarsManager = FindObjectOfType<CarsManager>();
         GamePlayerManager = FindObjectOfType<PlayerManager>();
 
-        if (_healthImages.Count != _currentHealth)
+        if (HealthImages.Count != CurrentHealth)
         {
-            Debug.LogError($"Health Images count({_healthImages.Count}) and Current Health value({_currentHealth}) is not matching. Using Health Images count for Current Health value({_healthImages.Count})");
-            _currentHealth = _healthImages.Count;
+            Debug.LogError($"Health Images count({HealthImages.Count}) and Current Health value({CurrentHealth}) is not matching. Using Health Images count for Current Health value({HealthImages.Count})");
+            CurrentHealth = HealthImages.Count;
         }
-        if (IsGameRunning)
-            StartGame();
+        if (CurrentGameState == GameState.Started)
+            StartCoroutine(StartGameAfterDelay());
     }
     private IEnumerator Tick()
     {
-        while (IsGameRunning)
+        while (CurrentGameState == GameState.Started)
         {
             yield return new WaitForSecondsRealtime(TimeStep);
             GameEventManager.InvokeTickEvent();
         }
     }
+    public void EndGame()
+    {
+        CurrentGameState = GameState.Ended;
+        StopCoroutine(Tick());
+        GameCarsManager.StopCarSpawning();
+    }
     public void StopGame()
     {
-        IsGameRunning = false;
+        CurrentGameState = GameState.Paused;
         StopCoroutine(Tick());
+        GameCarsManager.StopCarSpawning();
     }
     public void StartGame()
     {
-        IsGameRunning = true;
+        CurrentGameState = GameState.Started;
         StartCoroutine(Tick());
+        GameCarsManager.StartCarSpawning();
     }
 
+    private IEnumerator StartGameAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(.2f);
+        StartGame();
+    }
     //-------------
 
     public IEnumerator CheckCollisionLater()
@@ -91,7 +105,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(_collisionDetectionDelay);
         foreach (Car car in GameCarsManager.CurrentCars)
             if (car.CarPosition == GamePlayerManager.PlayerCell)
-                GameEventManager.InvokeMissEvent();
+                GameEventManager.InvokeMissEvent(car.CarPosition.MyImage);
     }
     public void TakePizza(Customer customer)
     {
@@ -117,22 +131,11 @@ public class GameManager : MonoBehaviour
     public void ReduceHealth()
     {
 
-        if (_currentHealth == 0) return;
+        if (CurrentHealth == 0) return;
 
-        --_currentHealth;
-
-
-        if (_currentHealth == 0)
-        {
-            GameEventManager.InvokeGameEndedEvent();
-            return;
-        }
+        --CurrentHealth;
     }
-    public void AnimateHealthReduce()
-    {
-        Image imageToAnimate = _healthImages[_currentHealth];
-        imageToAnimate.GetComponent<Animator>().enabled = true;
-    }
+
     public void ChangeScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
@@ -151,9 +154,17 @@ public class GameManager : MonoBehaviour
         if (TimeStep >= .1f)
             TimeStep -= DifficultyIncreasePerPoint;
     }
-    public void PauseGame()
+    public void PauseGameForThreeSeconds()
     {
-        StartCoroutine(PausingGame());
+        if (CurrentHealth == 0)
+        {
+            GameEventManager.InvokeGameEndedEvent();
+            return;
+        }
+        else
+        {
+            StartCoroutine(PausingGame());
+        }
     }
     private IEnumerator PausingGame()
     {
@@ -162,13 +173,4 @@ public class GameManager : MonoBehaviour
         StartGame();
     }
 
-    public void AnimateAngryManager()
-    {
-        StartCoroutine(AnimatingAngryManager());
-    }
-
-    private IEnumerator AnimatingAngryManager()
-    {
-        yield return null;
-    }
 }
