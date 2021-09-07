@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Other Variables")]
     [SerializeField] private AnimationManager GameAnimationManager;
+    [Range(.01f, 100f)] public float PauseDuration = 6;
 
 
 
@@ -75,7 +76,7 @@ public class GameManager : MonoBehaviour
 
 
 
-    private float _timeStep;
+    internal float _timeStep;
     private int _difficultyMultiplier = 0;
     [HideInInspector] public int _currentHealth;
 
@@ -172,7 +173,7 @@ public class GameManager : MonoBehaviour
         }
         _timeStep = TimeStepStartValue - _difficultyMultiplier * DifficultyIncreasePerPoint;
     }
-    public void PauseGameForThreeSeconds()
+    public void PauseGame()
     {
         if (_currentHealth == 0)
         {
@@ -187,10 +188,9 @@ public class GameManager : MonoBehaviour
     private IEnumerator PausingGame()
     {
         StopGame();
-        yield return new WaitForSecondsRealtime(3);
+        yield return new WaitForSecondsRealtime(PauseDuration);
         StartGame();
     }
-
     private IEnumerator EndingGame()
     {
         yield return new WaitForSecondsRealtime(3);

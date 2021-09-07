@@ -78,7 +78,7 @@ public class CustomersManager : MonoBehaviour
     }
     private IEnumerator ClearingDeliveries()
     {
-        yield return new WaitForSecondsRealtime(3);
+        yield return new WaitForSecondsRealtime(_gameManager.PauseDuration / 2);
         foreach (Customer customer in _allCustomers)
             customer.CancelDelivery();
     }

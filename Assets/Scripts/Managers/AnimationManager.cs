@@ -34,6 +34,11 @@ public class AnimationManager : MonoBehaviour
 
     public void AnimateAngryManager()
     {
+        StartCoroutine(AnimatingAngryManager());
+    }
+    private IEnumerator AnimatingAngryManager()
+    {
+        yield return new WaitForSecondsRealtime(_gameManager.PauseDuration / 2);
         AngryBoss.SetTrigger("Animate");
     }
 
@@ -53,7 +58,7 @@ public class AnimationManager : MonoBehaviour
 
     public void AnimateTakingPizza(Customer customer)
     {
-        if (customer.CurrentlyOpenedClosing == false) // not open
+        if (customer.CurrentlyOpenedClosing == false) 
             StartCoroutine(AnimatingTakingPizza(customer));
     }
     private IEnumerator AnimatingTakingPizza(Customer customer)

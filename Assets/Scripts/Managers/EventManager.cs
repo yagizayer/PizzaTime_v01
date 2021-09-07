@@ -18,6 +18,11 @@ public class EventManager : MonoBehaviour
 
     [SerializeField] private GameManager _gameManager;
 
+    private void Start() {
+        _gameManager = FindObjectOfType<GameManager>();
+    }
+
+
     public void InvokeMenuMovementEvent(CellDirection direction)
     {
         if (_showEventFiredMessages)

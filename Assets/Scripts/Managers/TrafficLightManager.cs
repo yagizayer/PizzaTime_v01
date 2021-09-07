@@ -23,14 +23,8 @@ public class TrafficLightManager : MonoBehaviour
         _myImage = GetComponent<Image>();
 
         if (_gameManager.Mode == GameMode.A)
-        {
             _percentage = 0;
-            _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightStop];
-        }
-        else
-        {
-            _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightGo];
-        }
+        _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightGo];
     }
 
     public void ChangeDirection()
@@ -38,15 +32,14 @@ public class TrafficLightManager : MonoBehaviour
         if (CurrentState == Basic.On)
         {
             CurrentState = Basic.Off;
-            _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightStop];
-            _carsManager.CurrentMotion = Orientation.Horizontal;
+            _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightGo];
         }
         else
         {
             CurrentState = Basic.On;
-            _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightGo];
-            _carsManager.CurrentMotion = Orientation.Vertical;
+            _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightStop];
         }
+        _carsManager.ChangeDirection();
         _lastChangedTime = Time.time;
     }
     public void ChangeDirectionOnChance()

@@ -93,6 +93,9 @@ public class PlayerManager : MonoBehaviour
         ShowPlayer();
         yield return new WaitForSecondsRealtime(_fickerEffectDuration);
         HidePlayer(tempCell);
+        foreach (Car car in _gameManager.GameCarsManager.CurrentCars)
+            if (car.CarPosition == tempCell)
+                _gameManager.GameCarsManager.ShowCar(car.CarPosition, _gameManager.GameCarsManager.CarSprites[car.CarMotion]);
     }
 
     public void ShowPlayer()
@@ -177,7 +180,7 @@ public class PlayerManager : MonoBehaviour
     {
         IsMoveable = false;
         PlayerCell = _gameManager.StartingPosition;
-        yield return new WaitForSecondsRealtime(3f);
+        yield return new WaitForSecondsRealtime(_gameManager.PauseDuration);
         ShowPlayer();
         IsMoveable = true;
     }

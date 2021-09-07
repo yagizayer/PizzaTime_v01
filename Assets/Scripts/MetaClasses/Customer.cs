@@ -75,10 +75,9 @@ public class Customer : MonoBehaviour
         HideTimer();
     }
 
-
-
     public void ShowTimer()
     {
+        RelatedTimer.sprite = _gameManager.SpriteDatabase[AllSprites.Watch_1]; 
         RelatedTimer.enabled = true;
     }
     public void HideTimer()

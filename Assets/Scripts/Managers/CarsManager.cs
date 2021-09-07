@@ -22,14 +22,24 @@ public class CarsManager : MonoBehaviour
     public float CarSpawnRate = 2;
     public Orientation CurrentMotion = Orientation.Vertical;
     public bool OrientationActive = false;
+    public List<Car> CurrentCars = new List<Car>();
     [SerializeField, Range(.01f, 1)] private float _fickerEffectDuration = .1f;
+    [SerializeField] private Transform _leftSpawner;
+    [SerializeField] private Transform _rightSpawner;
     private CarSpawnerDict _spawners;
+    private float _currentCooldown; // in tickCount
+    private bool _ableTospawn = true;
+
     private GameManager _gameManager;
     private EventManager _eventManager;
     private PlayerManager _playerManager;
     [HideInInspector]
-    public List<Car> CurrentCars = new List<Car>();
     private SerializableDictionaryBase<CarMotions, Sprite> _carSprites = new SerializableDictionaryBase<CarMotions, Sprite>();
+
+    public SerializableDictionaryBase<CarMotions, Sprite> CarSprites { get => _carSprites; private set => _carSprites = value; }
+
+
+    //------------------------    
 
     private void Start()
     {
@@ -48,33 +58,36 @@ public class CarsManager : MonoBehaviour
             Debug.LogWarning($"Car Spawn rate({CarSpawnRate}) is multpile of Timestep({_gameManager.TimeStepStartValue}), this will cause cars rapidly proceeding to second cell, giving player no room for dodge.\n Changing Car Spawn rate to : {CarSpawnRate - .01f}");
             CarSpawnRate = CarSpawnRate - .01f;
         }
-
-
+        _currentCooldown = _gameManager.GameMap.MapSize.Item1; // rowCount
+        StartCoroutine(SpawnCar());
     }
-
     private IEnumerator SpawnCar()
     {
         while (true)
         {
             yield return new WaitForSecondsRealtime(CarSpawnRate);
             if (_gameManager.CurrentGameState != GameState.Started) continue;
+            if (!_ableTospawn) continue;
             Car spawnerCell = SelectRandomSpawner();
             CurrentCars.Add(spawnerCell);
             ShowCar(spawnerCell.CarPosition, _carSprites[spawnerCell.CarMotion]);
         }
     }
-
     public void StopCarSpawning()
     {
-        StopCoroutine(SpawnCar());
+        // StopCoroutine(SpawnCar());
     }
     public void StartCarSpawning()
     {
-        StartCoroutine(SpawnCar());
+        // StartCoroutine(SpawnCar());
     }
-
     public void ProceedCars()
     {
+        //give time to cars to disappear from scene
+        if (--_currentCooldown <= 0 && !_ableTospawn)
+        {
+            _ableTospawn = true;
+        }
         if (_gameManager.CurrentGameState != GameState.Started)
             return;
         List<Car> carsToRemove = new List<Car>();
@@ -92,21 +105,26 @@ public class CarsManager : MonoBehaviour
             {
                 // not end of the road yet
 
-
                 // orientation control
                 if (OrientationActive)
                 {
+
                     if (CurrentMotion == Orientation.Vertical)
-                        if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft) continue;
-                    if (CurrentMotion == Orientation.Horizontal)
-                        if (car.CarMotion == CarMotions.FrontToBack || car.CarMotion == CarMotions.BackToFront) continue;
+                        if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft)
+                        {
+                            ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
+                            continue;
+                        }
+                    // if (CurrentMotion == Orientation.Horizontal)
+                    //     if (car.CarMotion == CarMotions.FrontToBack || car.CarMotion == CarMotions.BackToFront) continue;
                 }
 
                 // proceeding part
                 HideCar(car.CarPosition);
                 car.CarPosition = car.CarPosition.GetNeighbor(direction);
                 ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
-                StartCoroutine(_gameManager.CheckCollisionLater());
+                if (_gameManager.GamePlayerManager.PlayerCell == car.CarPosition)
+                    StartCoroutine(_gameManager.CheckCollisionLater());
             }
             else
             {
@@ -119,7 +137,6 @@ public class CarsManager : MonoBehaviour
         foreach (Car car in carsToRemove)
             CurrentCars.Remove(car);
     }
-
 
     //------------------------
 
@@ -141,13 +158,13 @@ public class CarsManager : MonoBehaviour
                 if (selectedSpawnerIndex == counter)
                 {
                     // orientation control
-                    // if (OrientationActive)
-                    // {
-                    //     if (CurrentMotion == Orientation.Vertical)
-                    //         if (spawner.Value == CarMotions.LeftToRight || spawner.Value == CarMotions.RightToLeft) continue;
-                    //     if (CurrentMotion == Orientation.Horizontal)
-                    //         if (spawner.Value == CarMotions.FrontToBack || spawner.Value == CarMotions.BackToFront) continue;
-                    // }
+                    if (OrientationActive)
+                    {
+                        if (CurrentMotion == Orientation.Vertical)
+                            if (spawner.Value == CarMotions.LeftToRight || spawner.Value == CarMotions.RightToLeft) continue;
+                        if (CurrentMotion == Orientation.Horizontal)
+                            if (spawner.Value == CarMotions.FrontToBack || spawner.Value == CarMotions.BackToFront) continue;
+                    }
 
                     return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value);
                 }
@@ -155,7 +172,7 @@ public class CarsManager : MonoBehaviour
             }
         }
     }
-    private void ShowCar(PositionCell targetCell, Sprite sprite)
+    public void ShowCar(PositionCell targetCell, Sprite sprite)
     {
         targetCell.MyImage.sprite = sprite;
         targetCell.MyImage.enabled = true;
@@ -172,4 +189,68 @@ public class CarsManager : MonoBehaviour
         targetCell.MyImage.enabled = false;
         targetCell.MyImage.preserveAspect = false;
     }
+    public void ChangeDirection()
+    {
+        if (CurrentMotion == Orientation.Vertical)
+        {
+            CurrentMotion = Orientation.Horizontal;
+            UnblockRoads();
+        }
+        else
+        {
+            CurrentMotion = Orientation.Vertical;
+            List<Car> carsToRemove = new List<Car>();
+            foreach (Car car in CurrentCars)
+                if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft)
+                    carsToRemove.Add(car);
+            foreach (Car car in carsToRemove)
+            {
+                CurrentCars.Remove(car);
+                HideCar(car.CarPosition);
+            }
+            if (_gameManager.Mode == GameMode.B)
+                SpawnSideCar();
+        }
+
+        //give time to cars to disappear from scene
+        _currentCooldown = _gameManager.GameMap.MapSize.Item1;
+        _ableTospawn = false;
+    }
+    private void SpawnSideCar()
+    {
+        // randomly decide left or right
+        (Transform, CarMotions) tempValues = UnityEngine.Random.Range(0, 1) < .5f ? (_leftSpawner, CarMotions.LeftToRight) : (_rightSpawner, CarMotions.RightToLeft);
+
+        Car tempCar = new Car(tempValues.Item1.GetComponent<PositionCell>(), tempValues.Item2);
+        CurrentCars.Add(tempCar);
+        ShowCar(tempCar.CarPosition, _carSprites[tempValues.Item2]);
+
+        BlockRoad(tempCar.CarPosition);
+    }
+    private void BlockRoad(PositionCell carCell)
+    {
+        PositionCell carTopCell = carCell.GetNeighbor(CellDirection.Next);
+        PositionCell carBottomCell = carCell.GetNeighbor(CellDirection.Previous);
+
+
+        if (carTopCell) carTopCell.ForbidPlayerOnInput = CellDirection.Previous;
+        if (carBottomCell) carBottomCell.ForbidPlayerOnInput = CellDirection.Next;
+    }
+    private void UnblockRoads()
+    {
+        PositionCell leftSpawnerCell = _leftSpawner.GetComponent<PositionCell>();
+        PositionCell rightSpawnerCell = _rightSpawner.GetComponent<PositionCell>();
+
+        PositionCell leftTopCell = leftSpawnerCell.GetNeighbor(CellDirection.Next);
+        PositionCell rightTopCell = rightSpawnerCell.GetNeighbor(CellDirection.Next);
+        PositionCell leftBottomCell = leftSpawnerCell.GetNeighbor(CellDirection.Previous);
+        PositionCell rightBottomCell = rightSpawnerCell.GetNeighbor(CellDirection.Previous);
+
+        if (leftTopCell) leftTopCell.ForbidPlayerOnInput = CellDirection.Null;
+        if (rightTopCell) rightTopCell.ForbidPlayerOnInput = CellDirection.Null;
+        if (leftBottomCell) leftBottomCell.ForbidPlayerOnInput = CellDirection.Null;
+        if (rightBottomCell) rightBottomCell.ForbidPlayerOnInput = CellDirection.Null;
+    }
+
+
 }

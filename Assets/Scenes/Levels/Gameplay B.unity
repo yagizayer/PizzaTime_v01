@@ -615,7 +615,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 571438164}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: PauseGameForThreeSeconds
+        m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2188,8 +2188,8 @@ MonoBehaviour:
   TimeStepStartValue: 0.5
   DifficultyIncreasePerPoint: 0.0025
   _collisionDetectionDelay: 0.1
-  SpeedIncreaseThreshold: 2
-  SpeedResetThreshold: 10
+  SpeedIncreaseThreshold: 20
+  SpeedResetThreshold: 100
   GameMap: {fileID: 102907982}
   StartingPosition: {fileID: 952571907}
   _allCustomers:
@@ -2271,6 +2271,7 @@ MonoBehaviour:
   _totalPointUI: {fileID: 1591198131}
   TotalPoint: 0
   GameAnimationManager: {fileID: 475073935}
+  PauseDuration: 6
   GamePlayerManager: {fileID: 0}
   GameEventManager: {fileID: 0}
   GameCarsManager: {fileID: 0}
@@ -2306,6 +2307,8 @@ MonoBehaviour:
   CurrentMotion: 1
   OrientationActive: 1
   _fickerEffectDuration: 0.01
+  _leftSpawner: {fileID: 151105588}
+  _rightSpawner: {fileID: 370375847}
 --- !u!114 &571438167
 MonoBehaviour:
   m_ObjectHideFlags: 0
