@@ -2185,7 +2185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Mode: 1
   CurrentGameState: 0
-  TimeStepStartValue: 0.5
+  TimeStepStartValue: 1
   DifficultyIncreasePerPoint: 0.0025
   _collisionDetectionDelay: 0.1
   SpeedIncreaseThreshold: 20
@@ -2303,7 +2303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fccad2a4a4a36b4bb922885dede5825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CarSpawnRate: 2
+  CarSpawnRate: 3
   CurrentMotion: 1
   OrientationActive: 1
   _fickerEffectDuration: 0.01
@@ -4485,7 +4485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dee66a2136a1064488b6f479bdd82dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cooldown: 5
+  Cooldown: 10
   _percentage: 20
   CurrentState: 0
 --- !u!1 &1271481450

@@ -45,7 +45,7 @@ public class TrafficLightManager : MonoBehaviour
     public void ChangeDirectionOnChance()
     {
         // on cooldown
-        if (_lastChangedTime + Cooldown > Time.time)
+        if (_lastChangedTime + Cooldown * _gameManager._timeStep > Time.time)
             return;
         System.Random r = new System.Random();
         if (r.Next(0, 100) < _percentage)
