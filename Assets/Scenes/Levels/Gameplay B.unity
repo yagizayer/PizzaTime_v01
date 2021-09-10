@@ -179,6 +179,7 @@ MonoBehaviour:
   MyMainSprite: 1
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -328,9 +329,9 @@ MonoBehaviour:
     - {fileID: 7357123456376359846, guid: 8a3423644de552547bce76d8807407c2, type: 3}
     - {fileID: -3531878321590394162, guid: 8a3423644de552547bce76d8807407c2, type: 3}
     - {fileID: -7343860702648896561, guid: 8a3423644de552547bce76d8807407c2, type: 3}
-    - {fileID: 2091829175261615561, guid: 8a3423644de552547bce76d8807407c2, type: 3}
-    - {fileID: 8633881525917383573, guid: 8a3423644de552547bce76d8807407c2, type: 3}
-    - {fileID: -1771866121167276815, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+    - {fileID: -1341668520226631266, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+    - {fileID: 7509561017132818130, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+    - {fileID: 6395692444676197914, guid: 8a3423644de552547bce76d8807407c2, type: 3}
 --- !u!4 &61109274
 Transform:
   m_ObjectHideFlags: 0
@@ -677,7 +678,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   _showEventFiredMessages: 0
-  _gameManager: {fileID: 0}
+  _gameManager: {fileID: 571438164}
 --- !u!1 &102907980
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,7 +767,7 @@ RectTransform:
   m_Children:
   - {fileID: 459147790}
   - {fileID: 487301532}
-  - {fileID: 1579912919}
+  - {fileID: 353910118}
   - {fileID: 486615611}
   - {fileID: 1890201420}
   - {fileID: 1242678536}
@@ -873,6 +874,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 0100000002000000
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -989,6 +991,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -1265,16 +1268,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 353910117}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 562703467}
-  m_RootOrder: 3
+  m_Father: {fileID: 103478992}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -84.9, y: -80.2}
+  m_AnchoredPosition: {x: -89.9, y: -96.4}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &353910119
@@ -1297,7 +1300,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 8633881525917383573, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+  m_Sprite: {fileID: 7509561017132818130, guid: 8a3423644de552547bce76d8807407c2, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1390,6 +1393,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 0200000001000000
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -1581,6 +1585,7 @@ MonoBehaviour:
   MyMainSprite: 10
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 1
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -1737,6 +1742,7 @@ MonoBehaviour:
   MyMainSprite: 7
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -2127,7 +2133,6 @@ RectTransform:
   - {fileID: 1637291563}
   - {fileID: 1591198130}
   - {fileID: 1660201867}
-  - {fileID: 353910118}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2186,10 +2191,11 @@ MonoBehaviour:
   Mode: 1
   CurrentGameState: 0
   TimeStepStartValue: 1
-  DifficultyIncreasePerPoint: 0.0025
+  DifficultyIncreasePerPoint: 0.004
   _collisionDetectionDelay: 0.1
   SpeedIncreaseThreshold: 20
   SpeedResetThreshold: 100
+  HealthResetThreshold: 200
   GameMap: {fileID: 102907982}
   StartingPosition: {fileID: 952571907}
   _allCustomers:
@@ -2460,6 +2466,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -2576,6 +2583,7 @@ MonoBehaviour:
   MyMainSprite: 4
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -2692,6 +2700,7 @@ MonoBehaviour:
   MyMainSprite: 3
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -2845,6 +2854,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -2961,6 +2971,7 @@ MonoBehaviour:
   MyMainSprite: 5
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 1
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -3272,6 +3283,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -3388,6 +3400,7 @@ MonoBehaviour:
   MyMainSprite: 8
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -3719,6 +3732,7 @@ MonoBehaviour:
   MyMainSprite: 2
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -4142,6 +4156,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -4337,6 +4352,7 @@ MonoBehaviour:
   MyMainSprite: 9
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 1
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -4485,7 +4501,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dee66a2136a1064488b6f479bdd82dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cooldown: 10
+  Cooldown: 5
   _percentage: 20
   CurrentState: 0
 --- !u!1 &1271481450
@@ -4698,6 +4714,7 @@ MonoBehaviour:
   MyMainSprite: 0
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 0
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -5009,6 +5026,7 @@ MonoBehaviour:
   MyMainSprite: 6
   TeleportPlayerOnInput: 
   ForbidPlayerOnInput: 0
+  TeleportCar: 1
   Row: -1
   Column: -1
   MyImage: {fileID: 0}
@@ -5457,81 +5475,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1579912918
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1579912919}
-  - component: {fileID: 1579912921}
-  - component: {fileID: 1579912920}
-  m_Layer: 5
-  m_Name: Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1579912919
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1579912918}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.51755, y: 0.51755, z: 0.51755}
-  m_Children: []
-  m_Father: {fileID: 103478992}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -90.3, y: -97.2}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1579912920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1579912918}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 8633881525917383573, guid: 8a3423644de552547bce76d8807407c2, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 1
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1579912921
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1579912918}
-  m_CullTransparentMesh: 1
 --- !u!1 &1587532575
 GameObject:
   m_ObjectHideFlags: 0
@@ -5858,7 +5801,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -125.3, y: -93}
+  m_AnchoredPosition: {x: -124.14, y: -86.92}
   m_SizeDelta: {x: 50, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1660201868
@@ -5894,7 +5837,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Game B
+  m_Text: Game A
 --- !u!222 &1660201869
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6000,7 +5943,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2118958311618589481, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+  m_Sprite: {fileID: 4862775248813660871, guid: f2c94bea9d36ee540a32a2b4cf719ca7, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -6670,7 +6613,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2091829175261615561, guid: 8a3423644de552547bce76d8807407c2, type: 3}
+  m_Sprite: {fileID: -1341668520226631266, guid: 8a3423644de552547bce76d8807407c2, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

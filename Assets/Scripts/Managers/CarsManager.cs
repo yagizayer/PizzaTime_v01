@@ -85,11 +85,10 @@ public class CarsManager : MonoBehaviour
     {
         //give time to cars to disappear from scene
         if (--_currentCooldown <= 0 && !_ableTospawn)
-        {
             _ableTospawn = true;
-        }
         if (_gameManager.CurrentGameState != GameState.Started)
             return;
+
         List<Car> carsToRemove = new List<Car>();
         for (int i = 0; i < CurrentCars.Count; i++)
         {
@@ -101,30 +100,63 @@ public class CarsManager : MonoBehaviour
             if (car.CarMotion == CarMotions.FrontToBack) direction = CellDirection.Next; // to top
             if (car.CarMotion == CarMotions.BackToFront) direction = CellDirection.Previous; // to bottom
 
-            if (car.CarPosition.GetNeighbor(direction))
+            PositionCell targetCell = car.CarPosition.GetNeighbor(direction);
+            if (targetCell)
             {
                 // not end of the road yet
 
                 // orientation control
                 if (OrientationActive)
                 {
-
-                    if (CurrentMotion == Orientation.Vertical)
-                        if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft)
+                    if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft)
+                        if (CurrentMotion == Orientation.Vertical)
                         {
+                            // Show side car when cars movements are vertical
                             ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
                             continue;
                         }
-                    // if (CurrentMotion == Orientation.Horizontal)
-                    //     if (car.CarMotion == CarMotions.FrontToBack || car.CarMotion == CarMotions.BackToFront) continue;
+                        else
+                        {
+                            // Remove Side cars when Cars movements are horizontal
+                            HideCar(car.CarPosition);
+                            carsToRemove.Add(car);
+                            continue;
+                        }
                 }
 
                 // proceeding part
-                HideCar(car.CarPosition);
-                car.CarPosition = car.CarPosition.GetNeighbor(direction);
-                ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
-                if (_gameManager.GamePlayerManager.PlayerCell == car.CarPosition)
+
+                if (_gameManager.GamePlayerManager.PlayerCell == targetCell)
                     StartCoroutine(_gameManager.CheckCollisionLater());
+                else
+                {
+                    if (targetCell.TeleportCar)
+                    {
+                        PositionCell teleportCellPos = targetCell.GetNeighbor(direction);
+                        if (teleportCellPos)
+                        {
+                            HideCar(car.CarPosition);
+                            car.CarPosition = teleportCellPos;
+                            ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
+                            if (_gameManager.GamePlayerManager.PlayerCell == car.CarPosition)
+                                StartCoroutine(_gameManager.CheckCollisionLater());
+                        }
+                        else
+                        {
+                            // teleport to end of road
+                            HideCar(car.CarPosition);
+                            carsToRemove.Add(car);
+                        }
+                    }
+                    else
+                    {
+                        HideCar(car.CarPosition);
+                        car.CarPosition = targetCell;
+                        ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
+                        if (_gameManager.GamePlayerManager.PlayerCell == car.CarPosition)
+                            StartCoroutine(_gameManager.CheckCollisionLater());
+                    }
+                }
             }
             else
             {
@@ -205,8 +237,8 @@ public class CarsManager : MonoBehaviour
                     carsToRemove.Add(car);
             foreach (Car car in carsToRemove)
             {
-                CurrentCars.Remove(car);
                 HideCar(car.CarPosition);
+                CurrentCars.Remove(car);
             }
             if (_gameManager.Mode == GameMode.B)
                 SpawnSideCar();

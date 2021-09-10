@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using RotaryHeart.Lib.SerializableDictionary;
-using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
+using UnityEngine.UI;
+using UnityEngine;
 
 [System.Serializable]
 public class CellToCustomer : SerializableDictionaryBase<Transform, Customer> { }
@@ -26,6 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField, Range(.01f, 5f)] private float _collisionDetectionDelay = .1f;
     [Range(1, 100)] public int SpeedIncreaseThreshold = 10;
     [Range(1, 1000)] public int SpeedResetThreshold = 100;
+    [Range(1, 1000)] public int HealthResetThreshold = 200;
 
 
 
@@ -140,11 +140,12 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator CheckCollisionLater()
     {
-        yield return new WaitForSecondsRealtime(_collisionDetectionDelay);
+        yield return new WaitForSecondsRealtime(0);
         foreach (Car car in GameCarsManager.CurrentCars)
-            if (car.CarPosition == GamePlayerManager.PlayerCell)
+            if (car.CarPosition.GetNeighbor(car.CarMotion.toCellDirection()) == GamePlayerManager.PlayerCell)
                 GameEventManager.InvokeMissEvent(car.CarPosition.MyImage);
     }
+    
     public void ReduceHealth()
     {
         if (_currentHealth == 0) return;
@@ -166,11 +167,10 @@ public class GameManager : MonoBehaviour
     public void IncreaseDifficulty()
     {
         if (TotalPoint % SpeedIncreaseThreshold == 0) _difficultyMultiplier++;
-        if (TotalPoint % SpeedResetThreshold == 0)
-        {
-            _difficultyMultiplier = 0;
+        if (TotalPoint % HealthResetThreshold == 0)
             GameAnimationManager.ResetHealth();
-        }
+        if (TotalPoint % SpeedResetThreshold == 0)
+            _difficultyMultiplier = 0;
         _timeStep = TimeStepStartValue - _difficultyMultiplier * DifficultyIncreasePerPoint;
     }
     public void PauseGame()
@@ -193,7 +193,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator EndingGame()
     {
-        yield return new WaitForSecondsRealtime(3);
-        ChangeScene("MainMenu");
+        yield return new WaitForSecondsRealtime(PauseDuration);
+        ChangeScene(SceneManager.GetActiveScene().name);
     }
 }

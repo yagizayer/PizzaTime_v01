@@ -15,7 +15,7 @@ public class PositionCell : MonoBehaviour
         CellDirection.Null
     };
     public CellDirection ForbidPlayerOnInput = CellDirection.Null;
-
+    public bool TeleportCar = false;
 
     public int Row = -1;
     public int Column = -1;
