@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    [HideInInspector]
     public PositionCell PlayerCell;
     [SerializeField, Range(.01f, 1)] private float _fickerEffectDuration = .1f;
     private EventManager _eventManager;
@@ -75,7 +76,7 @@ public class PlayerManager : MonoBehaviour
 
         // collision detection
         foreach (Car car in _carsManager.CurrentCars)
-            StartCoroutine(_gameManager.CheckCollisionLater());
+            StartCoroutine(_gameManager.CheckCollisionLater(false));
 
     }
     public void GivePizza(Customer customer)

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.UI;
 using UnityEngine;
-using System;
+
 
 public class AnimationManager : MonoBehaviour
 {
     private GameManager _gameManager;
     private EventManager _eventManager;
     [SerializeField] private Animator AngryBoss;
+
+
     private void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
@@ -58,7 +60,7 @@ public class AnimationManager : MonoBehaviour
 
     public void AnimateTakingPizza(Customer customer)
     {
-        if (customer.CurrentlyOpenedClosing == false) 
+        if (customer.CurrentlyOpenedClosing == false)
             StartCoroutine(AnimatingTakingPizza(customer));
     }
     private IEnumerator AnimatingTakingPizza(Customer customer)

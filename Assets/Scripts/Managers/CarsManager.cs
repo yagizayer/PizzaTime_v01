@@ -127,7 +127,7 @@ public class CarsManager : MonoBehaviour
                 // proceeding part
 
                 if (_gameManager.GamePlayerManager.PlayerCell == targetCell)
-                    StartCoroutine(_gameManager.CheckCollisionLater());
+                    StartCoroutine(_gameManager.CheckCollisionLater(true));
                 else
                 {
                     if (targetCell.TeleportCar)
@@ -139,7 +139,7 @@ public class CarsManager : MonoBehaviour
                             car.CarPosition = teleportCellPos;
                             ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
                             if (_gameManager.GamePlayerManager.PlayerCell == car.CarPosition)
-                                StartCoroutine(_gameManager.CheckCollisionLater());
+                                StartCoroutine(_gameManager.CheckCollisionLater(true));
                         }
                         else
                         {
@@ -154,7 +154,7 @@ public class CarsManager : MonoBehaviour
                         car.CarPosition = targetCell;
                         ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
                         if (_gameManager.GamePlayerManager.PlayerCell == car.CarPosition)
-                            StartCoroutine(_gameManager.CheckCollisionLater());
+                            StartCoroutine(_gameManager.CheckCollisionLater(true));
                     }
                 }
             }

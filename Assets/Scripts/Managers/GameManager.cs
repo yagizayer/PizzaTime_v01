@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public GameState CurrentGameState = GameState.Started;
     [Tooltip("How many seconds should pass each game update")]
     [Range(.001f, 5)] public float TimeStepStartValue = 1;
-    [Range(.001f, .01f)] public float DifficultyIncreasePerPoint = .05f;
+    [Range(.01f, .1f)] public float DifficultyIncreasePerPoint = .05f;
     [Tooltip("Forgiveness for players late dodges (higher is easier to dodge)")]
     [SerializeField, Range(.01f, 5f)] private float _collisionDetectionDelay = .1f;
     [Range(1, 100)] public int SpeedIncreaseThreshold = 10;
@@ -72,6 +72,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public CarsManager GameCarsManager;
     [HideInInspector]
+    public TimeManager GameTimeManager;
+    [HideInInspector]
     internal SpritesDict SpriteDatabase;
 
 
@@ -92,6 +94,7 @@ public class GameManager : MonoBehaviour
         GameEventManager = FindObjectOfType<EventManager>();
         GameCarsManager = FindObjectOfType<CarsManager>();
         GamePlayerManager = FindObjectOfType<PlayerManager>();
+        GameTimeManager = FindObjectOfType<TimeManager>();
 
         if (HealthImages.Count != StartingHealth)
         {
@@ -138,14 +141,24 @@ public class GameManager : MonoBehaviour
     }
     //-------------
 
-    public IEnumerator CheckCollisionLater()
+    public IEnumerator CheckCollisionLater(bool lookForNextCell)
     {
         yield return new WaitForSecondsRealtime(0);
-        foreach (Car car in GameCarsManager.CurrentCars)
-            if (car.CarPosition.GetNeighbor(car.CarMotion.toCellDirection()) == GamePlayerManager.PlayerCell)
-                GameEventManager.InvokeMissEvent(car.CarPosition.MyImage);
+        if (lookForNextCell)
+        {
+            foreach (Car car in GameCarsManager.CurrentCars)
+                if (car.CarPosition.GetNeighbor(car.CarMotion.toCellDirection()) == GamePlayerManager.PlayerCell)
+                    GameEventManager.InvokeMissEvent(car.CarPosition.MyImage);
+        }
+        else
+        {
+            foreach (Car car in GameCarsManager.CurrentCars)
+                if (car.CarPosition == GamePlayerManager.PlayerCell)
+                    GameEventManager.InvokeMissEvent(car.CarPosition.MyImage);
+
+        }
     }
-    
+
     public void ReduceHealth()
     {
         if (_currentHealth == 0) return;
@@ -178,11 +191,11 @@ public class GameManager : MonoBehaviour
         if (_currentHealth == 0)
         {
             GameEventManager.InvokeGameEndedEvent();
-            return;
         }
         else
         {
             StartCoroutine(PausingGame());
+            GamePlayerManager.RespawnPlayer();
         }
     }
     private IEnumerator PausingGame()
@@ -193,7 +206,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator EndingGame()
     {
-        yield return new WaitForSecondsRealtime(PauseDuration);
-        ChangeScene(SceneManager.GetActiveScene().name);
+        yield return new WaitForSecondsRealtime(PauseDuration );
+        ChangeScene("MainMenu");
     }
 }
