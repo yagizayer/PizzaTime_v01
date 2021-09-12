@@ -9,10 +9,12 @@ public class Car
 {
     public PositionCell CarPosition;
     public CarMotions CarMotion;
-    public Car(PositionCell carPosition, CarMotions carMotion)
+    public int SpawnTick;
+    public Car(PositionCell carPosition, CarMotions carMotion, int spawnTick)
     {
         CarPosition = carPosition;
         CarMotion = carMotion;
+        SpawnTick = spawnTick;
     }
 }
 
@@ -26,9 +28,12 @@ public class CarsManager : MonoBehaviour
     [SerializeField, Range(.01f, 1)] private float _fickerEffectDuration = .1f;
     [SerializeField] private Transform _leftSpawner;
     [SerializeField] private Transform _rightSpawner;
+
+
     private CarSpawnerDict _spawners;
     private float _currentCooldown; // in tickCount
     private bool _ableTospawn = true;
+    private int _tickCount = 0;
 
     private GameManager _gameManager;
     private EventManager _eventManager;
@@ -118,14 +123,16 @@ public class CarsManager : MonoBehaviour
                         else
                         {
                             // Remove Side cars when Cars movements are horizontal
-                            HideCar(car.CarPosition);
-                            carsToRemove.Add(car);
+                            if (_tickCount - car.SpawnTick >= 1)// remove in 3 tick
+                            {
+                                HideCar(car.CarPosition);
+                                carsToRemove.Add(car);
+                            }
                             continue;
                         }
                 }
 
                 // proceeding part
-
                 if (_gameManager.GamePlayerManager.PlayerCell == targetCell)
                     StartCoroutine(_gameManager.CheckCollisionLater(true));
                 else
@@ -198,7 +205,7 @@ public class CarsManager : MonoBehaviour
                             if (spawner.Value == CarMotions.FrontToBack || spawner.Value == CarMotions.BackToFront) continue;
                     }
 
-                    return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value);
+                    return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value, _tickCount);
                 }
                 counter++;
             }
@@ -253,7 +260,7 @@ public class CarsManager : MonoBehaviour
         // randomly decide left or right
         (Transform, CarMotions) tempValues = UnityEngine.Random.Range(0, 1) < .5f ? (_leftSpawner, CarMotions.LeftToRight) : (_rightSpawner, CarMotions.RightToLeft);
 
-        Car tempCar = new Car(tempValues.Item1.GetComponent<PositionCell>(), tempValues.Item2);
+        Car tempCar = new Car(tempValues.Item1.GetComponent<PositionCell>(), tempValues.Item2, _tickCount);
         CurrentCars.Add(tempCar);
         ShowCar(tempCar.CarPosition, _carSprites[tempValues.Item2]);
 
@@ -283,6 +290,9 @@ public class CarsManager : MonoBehaviour
         if (leftBottomCell) leftBottomCell.ForbidPlayerOnInput = CellDirection.Null;
         if (rightBottomCell) rightBottomCell.ForbidPlayerOnInput = CellDirection.Null;
     }
-
+    public void IncreaseTickCounter()
+    {
+        _tickCount++;
+    }
 
 }
