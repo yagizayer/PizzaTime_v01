@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
-    [SerializeField] private UnityEvent<CellDirection> MenuMovementEvent = new UnityEvent<CellDirection>();
-    [SerializeField] private UnityEvent MenuSelectEvent = new UnityEvent();
     [SerializeField] private UnityEvent TickEvent = new UnityEvent();
     [SerializeField] private UnityEvent<CellDirection> PlayerMovementEvent = new UnityEvent<CellDirection>();
     [SerializeField] private UnityEvent<Customer> PlayerKnockEvent = new UnityEvent<Customer>();
@@ -23,18 +21,6 @@ public class EventManager : MonoBehaviour
     }
 
 
-    public void InvokeMenuMovementEvent(CellDirection direction)
-    {
-        if (_showEventFiredMessages)
-            Debug.Log("MenuMovementEvent fired");
-        MenuMovementEvent.Invoke(direction);
-    }
-    public void InvokeMenuSelectEvent()
-    {
-        if (_showEventFiredMessages)
-            Debug.Log("MenuSelectEvent fired");
-        MenuSelectEvent.Invoke();
-    }
     public void InvokePlayerMovementEvent(CellDirection direction)
     {
         if (_showEventFiredMessages)
