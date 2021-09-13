@@ -11,6 +11,7 @@ public class EventManager : MonoBehaviour
     [SerializeField] private UnityEvent<Customer> PlayerKnockEvent = new UnityEvent<Customer>();
     [SerializeField] private UnityEvent<Customer> DeliverEvent = new UnityEvent<Customer>();
     [SerializeField] private UnityEvent<Image> MissEvent = new UnityEvent<Image>();
+    [SerializeField] private UnityEvent TimesUpEvent = new UnityEvent();
     [SerializeField] private UnityEvent GameEndedEvent = new UnityEvent();
     [SerializeField] private bool _showEventFiredMessages = false;
 
@@ -50,6 +51,12 @@ public class EventManager : MonoBehaviour
         if (_showEventFiredMessages)
             Debug.Log("MissEvent fired");
         MissEvent.Invoke(imageToFlicker);
+    }
+    public void InvokeTimesUpEvent()
+    {
+        if (_showEventFiredMessages)
+            Debug.Log("TimesUpEvent fired");
+        TimesUpEvent.Invoke();
     }
     public void InvokeGameEndedEvent()
     {

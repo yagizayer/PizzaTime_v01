@@ -10,6 +10,7 @@ public class AnimationManager : MonoBehaviour
     private GameManager _gameManager;
     private EventManager _eventManager;
     [SerializeField] private Animator AngryBoss;
+    [SerializeField] private Animator Watch;
 
 
     private void Start()
@@ -23,6 +24,11 @@ public class AnimationManager : MonoBehaviour
         Image imageToAnimate = _gameManager.HealthImages[_gameManager._currentHealth];
         imageToAnimate.GetComponent<Animator>().enabled = true;
         imageToAnimate.GetComponent<Animator>().Play("HealthReduce");
+    }
+
+    public void AnimateTimesUp()
+    {
+        Watch.SetTrigger("Animate");
     }
     public void ResetHealth()
     {

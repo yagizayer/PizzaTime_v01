@@ -295,4 +295,11 @@ public class CarsManager : MonoBehaviour
         _tickCount++;
     }
 
+    public void ClearAllCars()
+    {
+        foreach (Car car in CurrentCars)
+            HideCar(car.CarPosition);
+
+        CurrentCars.Clear();
+    }
 }

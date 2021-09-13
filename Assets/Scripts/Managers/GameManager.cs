@@ -11,10 +11,6 @@ public class CellToCustomer : SerializableDictionaryBase<Transform, Customer> { 
 public class CarSpawnerDict : SerializableDictionaryBase<Transform, CarMotions> { }
 public class GameManager : MonoBehaviour
 {
-
-
-
-
     [Header("Important Variables")]
     public GameMode Mode = GameMode.A;
     public GameState CurrentGameState = GameState.Started;
@@ -104,6 +100,8 @@ public class GameManager : MonoBehaviour
         if (CurrentGameState == GameState.Started)
             StartCoroutine(StartGameAfterDelay());
 
+        StartCoroutine(CheckingForTimeUp());
+
         _timeStep = TimeStepStartValue;
         _currentHealth = StartingHealth;
     }
@@ -186,6 +184,10 @@ public class GameManager : MonoBehaviour
             _difficultyMultiplier = 0;
         _timeStep = TimeStepStartValue - _difficultyMultiplier * DifficultyIncreasePerPoint;
     }
+    public void PauseGame(float duration)
+    {
+        StartCoroutine(PausingGame(duration));
+    }
     public void PauseGame()
     {
         if (_currentHealth == 0)
@@ -198,6 +200,12 @@ public class GameManager : MonoBehaviour
             GamePlayerManager.RespawnPlayer();
         }
     }
+    private IEnumerator PausingGame(float duration)
+    {
+        StopGame();
+        yield return new WaitForSecondsRealtime(duration);
+        StartGame();
+    }
     private IEnumerator PausingGame()
     {
         StopGame();
@@ -206,7 +214,18 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator EndingGame()
     {
-        yield return new WaitForSecondsRealtime(PauseDuration );
+        yield return new WaitForSecondsRealtime(PauseDuration);
         ChangeScene("MainMenu");
+    }
+
+    private IEnumerator CheckingForTimeUp()
+    {
+        while (true)
+        {
+            yield return new WaitForSecondsRealtime(1);
+            float diff = GameTimeManager.CalculateAlarmDiff(TimeKeeper.SetTime, TimeKeeper.SetAlarm);
+            if (diff == 0)
+                GameEventManager.InvokeTimesUpEvent();
+        }
     }
 }
