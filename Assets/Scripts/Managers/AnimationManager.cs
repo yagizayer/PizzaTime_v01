@@ -1,6 +1,7 @@
+/// <summary>
+/// This file is used for most of the animations
+/// </summary>
 using System.Collections;
-using System.Collections.Generic;
-using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ public class AnimationManager : MonoBehaviour
         _eventManager = _gameManager.GameEventManager;
     }
 
+    /// <summary>
+    /// Animate Health Images for reducing health
+    /// </summary>
     public void AnimateHealthReduce()
     {
         Image imageToAnimate = _gameManager.HealthImages[_gameManager._currentHealth];
@@ -26,10 +30,17 @@ public class AnimationManager : MonoBehaviour
         imageToAnimate.GetComponent<Animator>().Play("HealthReduce");
     }
 
+    /// <summary>
+    /// Animate Time Images for Time's up
+    /// </summary>
     public void AnimateTimesUp()
     {
         Watch.SetTrigger("Animate");
     }
+    
+    /// <summary>
+    /// Resetting all health images (on 200 score)
+    /// </summary>
     public void ResetHealth()
     {
         _gameManager._currentHealth = _gameManager.StartingHealth;
@@ -40,16 +51,27 @@ public class AnimationManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Animating angry manager on each miss event
+    /// </summary>
     public void AnimateAngryManager()
     {
         StartCoroutine(AnimatingAngryManager());
     }
+    
+    /// <summary>
+    /// Animating angry manager on each miss event
+    /// </summary>
     private IEnumerator AnimatingAngryManager()
     {
         yield return new WaitForSecondsRealtime(_gameManager.PauseDuration / 2);
         AngryBoss.SetTrigger("Animate");
     }
 
+    /// <summary>
+    /// Animating Flicker effect on each miss event (timer or car)
+    /// </summary>
+    /// <param name="targetGraphic"></param>
     public void AnimateMissFlickerEffect(Image targetGraphic)
     {
         Animator targetAnimator = targetGraphic.GetComponent<Animator>();
@@ -58,17 +80,31 @@ public class AnimationManager : MonoBehaviour
         targetAnimator.SetTrigger("Animate");
         StartCoroutine(CloseAnimator(targetAnimator));
     }
+    
+    /// <summary>
+    /// Closes given animator after 3 seconds
+    /// </summary>
+    /// <param name="targetAnimator">Target animator</param>
     private IEnumerator CloseAnimator(Animator targetAnimator)
     {
         yield return new WaitForSecondsRealtime(3);
         targetAnimator.enabled = false;
     }
 
+    /// <summary>
+    /// Animates Customer to take pizza
+    /// </summary>
+    /// <param name="customer">Target Customer</param>
     public void AnimateTakingPizza(Customer customer)
     {
         if (customer.CurrentlyOpenedClosing == false)
             StartCoroutine(AnimatingTakingPizza(customer));
     }
+    
+    /// <summary>
+    /// Animates Customer to take pizza
+    /// </summary>
+    /// <param name="customer">Target Customer</param>
     private IEnumerator AnimatingTakingPizza(Customer customer)
     {
         customer.CurrentlyOpenedClosing = true;

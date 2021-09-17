@@ -1,5 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+/// <summary>
+/// This file is used for refering a customer.
+/// </summary>
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.UI;
 using UnityEngine;
@@ -32,7 +33,9 @@ public class Customer : MonoBehaviour
         _eventManager = _gameManager.GameEventManager;
     }
 
-
+    /// <summary>
+    /// If customer is waiting for a deliver, this function proceeds its time each tick.
+    /// </summary>
     public void ProceedTimer()
     {
         switch (--RemainingTime)
@@ -67,6 +70,9 @@ public class Customer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cancels current customers delivery and resets its timer.
+    /// </summary>
     public void CancelDelivery()
     {
         CurrentlyWaitingForPizza = false;
@@ -75,11 +81,18 @@ public class Customer : MonoBehaviour
         HideTimer();
     }
 
+    /// <summary>
+    /// Make watch object visible on scene
+    /// </summary>
     public void ShowTimer()
     {
         RelatedTimer.sprite = _gameManager.SpriteDatabase[AllSprites.Watch_1]; 
         RelatedTimer.enabled = true;
     }
+
+    /// <summary>
+    /// Make watch object invisible on scene
+    /// </summary>
     public void HideTimer()
     {
         RelatedTimer.enabled = false;

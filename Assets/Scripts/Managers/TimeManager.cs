@@ -1,16 +1,15 @@
+/// <summary>
+/// This file used for setting and editing Time and Alarm
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.UI;
 using UnityEngine;
-using System;
-
 [System.Serializable]
 public class TimeGameObjectsDict : SerializableDictionaryBase<TimeGameObjects, Text> { }
-
 [System.Serializable]
 public class TimeAnimatorsDict : SerializableDictionaryBase<TimeEditingMode, Animator> { }
-
 public partial class TimeManager : MonoBehaviour
 {
     private GameManager _gameManager;
@@ -75,6 +74,9 @@ public partial class TimeManager : MonoBehaviour
 
     //------------------
 
+    /// <summary>
+    /// When called Game enters edit mode and you can use wasd keys for editing time
+    /// </summary>
     public void EditTime()
     {
         _editingTime = true;
@@ -85,6 +87,10 @@ public partial class TimeManager : MonoBehaviour
         StopCoroutine(ProceedActiveTime());
 
     }
+
+    /// <summary>
+    /// When called Game enters edit mode and you can use wasd keys for editing alarm
+    /// </summary>
     public void EditAlarm()
     {
         _editingTime = false;
@@ -94,6 +100,10 @@ public partial class TimeManager : MonoBehaviour
         _timeAnimators[_timeEditingMode].enabled = true;
 
     }
+    
+    /// <summary>
+    /// When called Game Exits edit mode and sets edited time as current time to TimeKeeper.cs
+    /// </summary>
     public void TimeSet()
     {
         if (TimeKeeper.SetTime.Equals(TimeKeeper.SetAlarm))
@@ -108,6 +118,10 @@ public partial class TimeManager : MonoBehaviour
         UpdateUI();
         StartCoroutine(ProceedActiveTime());
     }
+    
+    /// <summary>
+    /// When called Game Exits edit mode and sets edited alarm as current alarm to TimeKeeper.cs
+    /// </summary>
     public void AlarmSet()
     {
         if (TimeKeeper.SetTime.Equals(TimeKeeper.SetAlarm))
@@ -122,6 +136,11 @@ public partial class TimeManager : MonoBehaviour
             _gameManager.StartGame();
         ResetTimeObjects();
     }
+    
+    /// <summary>
+    /// When player editing time used w or s key. As result time is changed.
+    /// </summary>
+    /// <param name="isIncrease">If player used w key this is true</param>
     public void UpdateTime(bool isIncrease)
     {
         if (isIncrease)
@@ -137,6 +156,11 @@ public partial class TimeManager : MonoBehaviour
             if (_timeEditingMode == TimeEditingMode.Minutes) TimeKeeper.SetTime.DecreaseMinutes();
         }
     }
+    
+    /// <summary>
+    /// When player editing Alarm used w or s key. As result Alarm is changed.
+    /// </summary>
+    /// <param name="isIncrease">If player used w key this is true</param>
     public void UpdateAlarm(bool isIncrease)
     {
         if (isIncrease)
@@ -152,6 +176,10 @@ public partial class TimeManager : MonoBehaviour
             if (_timeEditingMode == TimeEditingMode.Minutes) TimeKeeper.SetAlarm.DecreaseMinutes();
         }
     }
+    
+    /// <summary>
+    /// Updates Scene objects according to current time.
+    /// </summary>
     private void UpdateUI()
     {
         ResetTimeObjects();
@@ -166,11 +194,24 @@ public partial class TimeManager : MonoBehaviour
             _timeGameobjects[TimeGameObjects.MinutesGO].GetComponent<Text>().text = TimeKeeper.SetAlarm.Minutes.ToStringWithFormat(2);
         }
     }
+    
+    /// <summary>
+    /// Blinking effect for indicating which part of time is Editing 
+    /// </summary>
     private void AnimateTime()
     {
         ResetTimeObjects();
         _timeAnimators[_timeEditingMode].enabled = true;
     }
+    
+    /// <summary>
+    /// Resets Time objects to prevent staying them close during navigating between them.
+    /// (ex. 
+    ///     during blinking animation if we move from hour part to minutes part, 
+    ///     Hour part may be stay invisible at scene. 
+    ///     This function prevents this.
+    /// )
+    /// </summary>
     private void ResetTimeObjects()
     {
         foreach (KeyValuePair<TimeEditingMode, Animator> item in _timeAnimators)
@@ -210,6 +251,12 @@ public partial class TimeManager : MonoBehaviour
 
     //------------------
 
+    /// <summary>
+    /// Returns Differance between Current time and setted alarm
+    /// </summary>
+    /// <param name="currentTime">current time</param>
+    /// <param name="currentAlarm">current alarm</param>
+    /// <returns>differance between them as minutes</returns>
     public float CalculateAlarmDiff(CurrentTime currentTime, CurrentTime currentAlarm)
     {
         float result = 0;
@@ -233,6 +280,10 @@ public partial class TimeManager : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// proceeds current time as expected
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator ProceedActiveTime()
     {
         while (TimeKeeper.SettingMode == TimeMode.Set)
@@ -244,6 +295,9 @@ public partial class TimeManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// used for resetting Alarm
+    /// </summary>
     public void ResetAlarm()
     {
         TimeKeeper.SetAlarm = new CurrentTime();

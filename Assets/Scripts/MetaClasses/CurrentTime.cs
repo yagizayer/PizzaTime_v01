@@ -1,3 +1,6 @@
+/// <summary>
+/// Class for holding time info
+/// </summary>
 public class CurrentTime
 {
     private bool _isAM = false;
@@ -62,6 +65,16 @@ public class CurrentTime
                IsAM == time.IsAM &&
                Hours == time.Hours &&
                Minutes == time.Minutes;
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return base.ToString();
     }
 }
 

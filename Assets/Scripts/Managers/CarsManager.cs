@@ -1,9 +1,10 @@
+/// <summary>
+/// This file used for managing all cars movements
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using RotaryHeart.Lib.SerializableDictionary;
-using UnityEngine.UI;
 using UnityEngine;
-using System;
 
 public class Car
 {
@@ -65,9 +66,12 @@ public class CarsManager : MonoBehaviour
             Debug.LogWarning($"Car Spawn rate({CarSpawnRate}) is multpile of Timestep({_gameManager.TimeStepStartValue}), this will cause cars rapidly proceeding to second cell, giving player no room for dodge.\n Changing Car Spawn rate to : {CarSpawnRate - .01f}");
             CarSpawnRate = CarSpawnRate - .01f;
         }
-        // _currentCooldown = _gameManager.GameMap.MapSize.Item1; // rowCount
         StartCoroutine(SpawningCar());
     }
+
+    /// <summary>
+    /// Spawns Cars in a determined Time span
+    /// </summary>
     private IEnumerator SpawningCar()
     {
         while (true)
@@ -97,19 +101,12 @@ public class CarsManager : MonoBehaviour
 
         }
     }
-    public void StopCarSpawning()
-    {
-        // StopCoroutine(SpawnCar());
-    }
-    public void StartCarSpawning()
-    {
-        // StartCoroutine(SpawnCar());
-    }
+
+    /// <summary>
+    /// Moves Cars on the scene
+    /// </summary>
     public void ProceedCars()
     {
-        //give time to cars to disappear from scene
-        // if (--_currentCooldown <= 0 && !_ableTospawn)
-        //     _ableTospawn = true;
         if (_gameManager.CurrentGameState != GameState.Started)
             return;
 
@@ -199,6 +196,10 @@ public class CarsManager : MonoBehaviour
 
     //------------------------
 
+    /// <summary>
+    /// Spawns a Car on a random spawner
+    /// </summary>
+    /// <returns>Car object</returns>
     private Car SpawnCar()
     {
         System.Random r = new System.Random();
@@ -242,6 +243,11 @@ public class CarsManager : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Spawns Double cars from top to bottom
+    /// </summary>
+    /// <returns>2 car object</returns>
     private Car[] SpawnDoubleCar()
     {
         Car[] result = new Car[2];
@@ -250,16 +256,32 @@ public class CarsManager : MonoBehaviour
         result[1] = new Car(_topRightSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount);
         return result;
     }
+
+    /// <summary>
+    /// Shows car object in scene
+    /// </summary>
+    /// <param name="targetCell">Car Position</param>
+    /// <param name="sprite">related Sprite</param>
     public void ShowCar(PositionCell targetCell, Sprite sprite)
     {
         targetCell.MyImage.sprite = sprite;
         targetCell.MyImage.enabled = true;
         targetCell.MyImage.preserveAspect = true;
     }
+
+    /// <summary>
+    /// Hides car object in scene
+    /// </summary>
+    /// <param name="targetCell">Car Position</param>
     public void HideCar(PositionCell targetCell)
     {
         StartCoroutine(HidingCar(targetCell));
     }
+
+    /// <summary>
+    /// Hides car object in scene
+    /// </summary>
+    /// <param name="targetCell">Car Position</param>
     private IEnumerator HidingCar(PositionCell targetCell)
     {
         yield return new WaitForSecondsRealtime(_fickerEffectDuration);
@@ -267,6 +289,10 @@ public class CarsManager : MonoBehaviour
         targetCell.MyImage.enabled = false;
         targetCell.MyImage.preserveAspect = false;
     }
+
+    /// <summary>
+    /// Change current orientation of road
+    /// </summary>
     public void ChangeDirection()
     {
         if (CurrentMotion == Orientation.Vertical)
@@ -290,10 +316,11 @@ public class CarsManager : MonoBehaviour
                 SpawnSideCar();
         }
 
-        //give time to cars to disappear from scene
-        // _currentCooldown = _gameManager.GameMap.MapSize.Item1;
-        // _ableTospawn = false;
     }
+
+    /// <summary>
+    /// Spawns a Side Car 
+    /// </summary>
     private void SpawnSideCar()
     {
         // randomly decide left or right
@@ -305,6 +332,11 @@ public class CarsManager : MonoBehaviour
 
         BlockRoad(tempCar.CarPosition);
     }
+
+    /// <summary>
+    /// Blocks road for going up or downside of game area
+    /// </summary>
+    /// <param name="carCell">Blocking Cars position</param>
     private void BlockRoad(PositionCell carCell)
     {
         PositionCell carTopCell = carCell.GetNeighbor(CellDirection.Next);
@@ -313,6 +345,10 @@ public class CarsManager : MonoBehaviour
         if (carTopCell) carTopCell.ForbidPlayerOnInput = CellDirection.Previous;
         if (carBottomCell) carBottomCell.ForbidPlayerOnInput = CellDirection.Next;
     }
+
+    /// <summary>
+    /// Removes all Blocking cars from scene and opens roads to player
+    /// </summary>
     private void UnblockRoads()
     {
         PositionCell leftSpawnerCell = _leftSpawner.GetComponent<PositionCell>();
@@ -328,6 +364,11 @@ public class CarsManager : MonoBehaviour
         if (leftBottomCell) leftBottomCell.ForbidPlayerOnInput = CellDirection.Null;
         if (rightBottomCell) rightBottomCell.ForbidPlayerOnInput = CellDirection.Null;
     }
+
+    /// <summary>
+    /// Removes given Blocking car from scene and opens roads to player
+    /// </summary>
+    /// <param name="carCell">Blocking Cars position</param>
     private void UnblockRoads(PositionCell carCell)
     {
         PositionCell carTopCell = carCell.GetNeighbor(CellDirection.Next);
@@ -336,10 +377,15 @@ public class CarsManager : MonoBehaviour
         if (carTopCell) carTopCell.ForbidPlayerOnInput = CellDirection.Null;
         if (carBottomCell) carBottomCell.ForbidPlayerOnInput = CellDirection.Null;
     }
-    public void IncreaseTickCounter()
-    {
-        _tickCount++;
-    }
+
+    /// <summary>
+    /// counts every tick
+    /// </summary>
+    public void IncreaseTickCounter() =>  _tickCount++;
+
+    /// <summary>
+    /// Remove all cars from scene
+    /// </summary>
     public void ClearAllCars()
     {
         foreach (Car car in CurrentCars)

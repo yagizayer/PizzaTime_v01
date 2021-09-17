@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+/// <summary>
+/// This class holds Time information between scenes.
+/// </summary>
 public static class TimeKeeper 
 {
     public static TimeMode SettingMode = TimeMode.NotSet;

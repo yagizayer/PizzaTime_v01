@@ -1,4 +1,6 @@
-using System;
+/// <summary>
+/// This file is used for Managing Customers
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +26,9 @@ public class CustomersManager : MonoBehaviour
 
     //---------------
 
+    /// <summary>
+    /// Spawn a Delivery on a random avaliable customer
+    /// </summary>
     public void SpawnDelivery()
     {
         List<int> indexes = new List<int>();
@@ -36,6 +41,10 @@ public class CustomersManager : MonoBehaviour
             SpawnDelivery(customer);
         }
     }
+
+    /// <summary>
+    /// Spawns Delivery if there is no other delivery waiting
+    /// </summary>
     public void SpawnDeliveryOnChance()
     {
         bool noOtherDeliveries = true;
@@ -46,11 +55,18 @@ public class CustomersManager : MonoBehaviour
             SpawnDelivery();
     }
 
+    /// <summary>
+    /// Sets las delivered customer (to avoid spawning same customer over and over again)
+    /// </summary>
+    /// <param name="customer">last customer</param>
     public void SetLastDeliveredCustomer(Customer customer)
     {
         _lastDeliveredCustomer = customer;
     }
 
+    /// <summary>
+    /// Proceed Customers Delivery times
+    /// </summary>
     public void ProceedCustomerTimers()
     {
         if (_gameManager.CurrentGameState != GameState.Started)
@@ -63,6 +79,11 @@ public class CustomersManager : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Receive Delivery and close timer/clear variables
+    /// </summary>
+    /// <param name="customer"></param>
     public void PizzaReceived(Customer customer)
     {
         customer.CurrentlyWaitingForPizza = false;
@@ -70,10 +91,18 @@ public class CustomersManager : MonoBehaviour
         customer.RemainingTime = 8;
         customer.HideTimer();
     }
+
+    /// <summary>
+    /// Clears all active deliveries (after a miss event)
+    /// </summary>
     public void ClearAllDeliveries()
     {
         StartCoroutine(ClearingDeliveries());
     }
+    
+    /// <summary>
+    /// Clears all active deliveries (after a miss event)
+    /// </summary>
     private IEnumerator ClearingDeliveries()
     {
         yield return new WaitForSecondsRealtime(_gameManager.PauseDuration / 2);
@@ -84,11 +113,19 @@ public class CustomersManager : MonoBehaviour
 
     //---------------
 
+    /// <summary>
+    /// Initialize all customers for game start
+    /// </summary>
     private void InitializeCustomers()
     {
         foreach (Customer customer in _allCustomers)
             customer.LastDeliveredTime = Time.time;
     }
+
+    /// <summary>
+    /// Spawn a specific customers delivery 
+    /// </summary>
+    /// <param name="customer"></param>
     private void SpawnDelivery(Customer customer)
     {
         customer.CurrentlyWaitingForPizza = true;
@@ -96,6 +133,11 @@ public class CustomersManager : MonoBehaviour
     }
 
     //---------------
+
+    /// <summary>
+    /// Increase Timer count related to score
+    /// </summary>
+    /// <returns>timer count (up to "customer count-1")</returns>
     private int DecideCurrentTimerCount()
     {
         int result = 1;
@@ -103,6 +145,13 @@ public class CustomersManager : MonoBehaviour
         if (_gameManager.TotalPoint % TimerCountThresholds[3] > TimerCountThresholds[2]) result = 3;
         return result;
     }
+    
+    /// <summary>
+    /// Returns an non-recurring random list of integers
+    /// </summary>
+    /// <param name="objectPool">selectable integers</param>
+    /// <param name="desiredListCount">desired return list size</param>
+    /// <returns>Random non-recurring integer list</returns>
     private List<int> GetUniqueRandomList(List<int> objectPool, int desiredListCount)
     {
         List<int> excludedIndexes = new List<int>();

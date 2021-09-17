@@ -1,5 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+/// <summary>
+/// This file used for changing Game B's road orientation
+/// </summary>
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -27,6 +28,9 @@ public class TrafficLightManager : MonoBehaviour
         _myImage.sprite = _gameManager.SpriteDatabase[AllSprites.TrafficLightGo];
     }
 
+    /// <summary>
+    /// Change current orientation of road
+    /// </summary>
     public void ChangeDirection()
     {
         if (CurrentState == Basic.On)
@@ -42,6 +46,10 @@ public class TrafficLightManager : MonoBehaviour
         _carsManager.ChangeDirection();
         _lastChangedTime = Time.time;
     }
+    
+    /// <summary>
+    /// Called on each tick and changes direction if random number is below certain point 
+    /// </summary>
     public void ChangeDirectionOnChance()
     {
         // on cooldown

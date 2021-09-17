@@ -1,4 +1,6 @@
-using System.Collections;
+/// <summary>
+/// This file determines only one cell
+/// </summary>
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -30,6 +32,11 @@ public class PositionCell : MonoBehaviour
         if (MyMainSprite != AllSprites.Null)
             MyImage.sprite = _gameManager.SpriteDatabase[MyMainSprite];
     }
+    /// <summary>
+    /// Gives a Neighbor of this cell
+    /// </summary>
+    /// <param name="targetCellDirection">Desired Cells direction</param>
+    /// <returns>Neighbor PositionCell of this one</returns>
     public PositionCell GetNeighbor(CellDirection targetCellDirection)
     {
         switch (targetCellDirection)
@@ -50,6 +57,9 @@ public class PositionCell : MonoBehaviour
                 return null;
         }
     }
+    /// <summary>
+    /// Shows the MainSprite of this cell. 
+    /// </summary>
     public void ShowMainSprite()
     {
         if (MyMainSprite != AllSprites.Null)

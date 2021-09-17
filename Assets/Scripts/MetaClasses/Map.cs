@@ -1,4 +1,8 @@
-using System.Collections;
+/// <summary>
+/// This file is used for creating a dynamic map on scene
+/// </summary>
+
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +13,10 @@ public class Map : MonoBehaviour
     [HideInInspector]
     public List<List<PositionCell>> Cells = new List<List<PositionCell>>();
 
+
+    // MapLayout is how you Want to be the map on scene(hand written),
+    // each column has 0s and 1s 0 means "no cell here" and 1 means "there is a cell"
+    // first row(most top) has 2 cells and only cars spawns in these cells
     internal (List<List<int>>, List<List<PositionCell>>) MapLayout = (new List<List<int>>(){
         new List<int>(){0,1,1,1,1},// first column
         new List<int>(){1,1,1,1,1},
@@ -22,9 +30,13 @@ public class Map : MonoBehaviour
         FillNeighbors();
     }
 
+    /// <summary>
+    /// Creates a Map for determine playable area
+    /// </summary>
+    /// <param name="columns">Real Scene objects referances</param>
+    /// <returns>A map filled with usable PositionCell components</returns>
     private List<List<PositionCell>> FillCells(List<Transform> columns)
     {
-
         // Fill Cells
         List<List<PositionCell>> result = new List<List<PositionCell>>();
         foreach (Transform column in columns)
@@ -56,6 +68,9 @@ public class Map : MonoBehaviour
         }
         return result;
     }
+    /// <summary>
+    /// Fills created Cells object's neighbors
+    /// </summary>
     private void FillNeighbors()
     {
         for (int columnNo = 0; columnNo < MapLayout.Item2.Count; columnNo++)

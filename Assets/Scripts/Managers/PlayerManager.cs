@@ -1,7 +1,8 @@
+/// <summary>
+/// This file used for determining player behaviour.
+/// </summary>
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 public class PlayerManager : MonoBehaviour
 {
@@ -51,16 +52,19 @@ public class PlayerManager : MonoBehaviour
 
     //----------------
 
+    /// <summary>
+    /// Moves player from current cell to a neighbor cell
+    /// </summary>
+    /// <param name="targetDirection"></param>
     public void Move(CellDirection targetDirection)
     {
         PositionCell targetCell = PlayerCell.GetNeighbor(targetDirection);
 
+        // edge of the map
         if (targetCell == null)
-        {
             return;
-        }
 
-        //in case of forbidded direction desired
+        //in case of forbidded direction
         if (PlayerCell.ForbidPlayerOnInput == targetDirection)
             return;
 
@@ -68,17 +72,20 @@ public class PlayerManager : MonoBehaviour
         if (targetCell.TeleportPlayerOnInput.Contains(targetDirection) || PlayerCell.TeleportPlayerOnInput.Contains(targetDirection))
             targetCell = targetCell.GetNeighbor(targetDirection);
 
+        // everytihng is fine
         if (targetCell.PlaceFor.Contains(AcceptedEntities.Player))
-        {
             StartCoroutine(ShowHidePlayer(targetCell));
-            // ShowPlayer(targetDirection, targetCell); // old code (Dynamic Sprites for each Image)
-        }
 
         // collision detection
         foreach (Car car in _carsManager.CurrentCars)
             StartCoroutine(_gameManager.CheckCollisionLater(false));
 
     }
+    
+    /// <summary>
+    /// Used for triggering Pizza delivery event
+    /// </summary>
+    /// <param name="customer"></param>
     public void GivePizza(Customer customer)
     {
         if (customer.CurrentlyWaitingForPizza)
@@ -87,6 +94,11 @@ public class PlayerManager : MonoBehaviour
 
     //-----------------
 
+    /// <summary>
+    /// Flicker effect on move
+    /// player appears on desired cell and after a certain time disappears from old position.
+    /// </summary>
+    /// <param name="targetCell">Desired cell</param>
     private IEnumerator ShowHidePlayer(PositionCell targetCell)
     {
         PositionCell tempCell = PlayerCell;
@@ -99,84 +111,45 @@ public class PlayerManager : MonoBehaviour
                 _gameManager.GameCarsManager.ShowCar(car.CarPosition, _gameManager.GameCarsManager.CarSprites[car.CarMotion]);
     }
 
+    /// <summary>
+    /// Makes Player visible on scene
+    /// </summary>
     public void ShowPlayer()
     {
-        #region OldCode (Dynamic Sprites for each Image)
-
-        // Sprite targetSprite = _gameManager.SpriteDatabase[AllSprites.PlayerTalkingBack];
-        // PlayerCell.MyImage.sprite = targetSprite;
-
-        #endregion
-
         PlayerCell.ShowMainSprite();
         PlayerCell.MyImage.enabled = true;
         PlayerCell.MyImage.preserveAspect = true;
     }
-
-    #region OldCode (Dynamic Sprites for each Image)
-    // public void ShowPlayer(CellDirection targetDirection, PositionCell targetCell)
-    // {
-    //     Sprite targetSprite = _gameManager.SpriteDatabase[AllSprites.Null];
-    //     if (targetDirection == CellDirection.Next)
-    //     {
-    //         // select "player walking back" sprite 
-    //         targetSprite = _gameManager.SpriteDatabase[AllSprites.PlayerWalkingBack];
-    //     }
-    //     if (targetDirection == CellDirection.Previous)
-    //     {
-    //         // select "player walking front" sprite 
-    //         targetSprite = _gameManager.SpriteDatabase[AllSprites.PlayerWalkingFront];
-    //     }
-    //     if (targetDirection == CellDirection.Left)
-    //     {
-    //         if (targetCell.Column == 2 || targetCell.Column == 3)
-    //         {
-    //             // select "player crossing" sprite
-    //             targetSprite = _gameManager.SpriteDatabase[AllSprites.PlayerCrossingLeft];
-    //         }
-    //         else
-    //         {
-    //             // select "player walking Left" sprite
-    //             targetSprite = _gameManager.SpriteDatabase[AllSprites.PlayerStandingLeft_2];
-    //         }
-    //     }
-    //     if (targetDirection == CellDirection.Right)
-    //     {
-    //         if (targetCell.Column == 2 || targetCell.Column == 3)
-    //         {
-    //             // select "player crossing" sprite
-    //             targetSprite = _gameManager.SpriteDatabase[AllSprites.PlayerCrossingRight];
-    //         }
-    //         else
-    //         {
-    //             // select "player walking Right" sprite
-    //             targetSprite = _gameManager.SpriteDatabase[AllSprites.PlayerStandingRight_2];
-    //         }
-    //     }
-    //     PlayerCell.MyImage.sprite = targetSprite;
-
-    //     PlayerCell.MyImage.enabled = true;
-    //     PlayerCell.MyImage.preserveAspect = true;
-    // }
-    #endregion
-
+    
+    /// <summary>
+    /// Makes Player invisible on scene
+    /// </summary>
     public void HidePlayer(PositionCell targetCell)
     {
         targetCell.MyImage.enabled = false;
         targetCell.MyImage.preserveAspect = false;
     }
 
+    /// <summary>
+    /// Makes Player invisible on scene
+    /// </summary>
     public void HidePlayer()
     {
-        // PlayerCell.MyImage.sprite = null; // old code (Dynamic Sprites for each Image)
         PlayerCell.MyImage.enabled = false;
         PlayerCell.MyImage.preserveAspect = false;
     }
 
+    /// <summary>
+    /// Respawns Player after a certain time
+    /// </summary>
     public void RespawnPlayer()
     {
         StartCoroutine(RespawningPlayer());
     }
+
+    /// <summary>
+    /// Respawns Player after a certain time
+    /// </summary>
     private IEnumerator RespawningPlayer()
     {
         IsMoveable = false;
@@ -185,7 +158,5 @@ public class PlayerManager : MonoBehaviour
         ShowPlayer();
         IsMoveable = true;
     }
-
-
 
 }

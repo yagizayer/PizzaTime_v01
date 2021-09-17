@@ -1,3 +1,6 @@
+/// <summary>
+/// This file is used for almost everything
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using RotaryHeart.Lib.SerializableDictionary;
@@ -81,6 +84,7 @@ public class GameManager : MonoBehaviour
 
 
 
+    
     private void Awake()
     {
         SpriteDatabase = FindObjectOfType<Database>().AllSpritesDict;
@@ -105,6 +109,10 @@ public class GameManager : MonoBehaviour
         _timeStep = TimeStepStartValue;
         _currentHealth = StartingHealth;
     }
+    
+    /// <summary>
+    /// Proceed Game every few seconds
+    /// </summary>
     private IEnumerator Tick()
     {
         while (CurrentGameState == GameState.Started)
@@ -113,25 +121,38 @@ public class GameManager : MonoBehaviour
             GameEventManager.InvokeTickEvent();
         }
     }
+    
+    /// <summary>
+    /// All 3 Healt is wasted and game is ended
+    /// </summary>
     public void EndGame()
     {
         CurrentGameState = GameState.Ended;
         StopCoroutine(Tick());
-        GameCarsManager.StopCarSpawning();
         StartCoroutine(EndingGame());
     }
+    
+    /// <summary>
+    /// Stopping the game temporarily 
+    /// </summary>
     public void StopGame()
     {
         CurrentGameState = GameState.Paused;
         StopCoroutine(Tick());
-        GameCarsManager.StopCarSpawning();
     }
+    
+    /// <summary>
+    /// Starting the game (again)
+    /// </summary>
     public void StartGame()
     {
         CurrentGameState = GameState.Started;
         StartCoroutine(Tick());
-        GameCarsManager.StartCarSpawning();
     }
+    
+    /// <summary>
+    /// First time starting the game(waiting for everything to load)
+    /// </summary>
     private IEnumerator StartGameAfterDelay()
     {
         yield return new WaitForSecondsRealtime(.2f);
@@ -139,6 +160,11 @@ public class GameManager : MonoBehaviour
     }
     //-------------
 
+    /// <summary>
+    /// Check if player and car has collided or not
+    /// </summary>
+    /// <param name="lookForNextCell"></param>
+    /// <returns></returns>
     public IEnumerator CheckCollisionLater(bool lookForNextCell)
     {
         yield return new WaitForSecondsRealtime(0);
@@ -156,16 +182,28 @@ public class GameManager : MonoBehaviour
 
         }
     }
-
+    
+    /// <summary>
+    /// Reduce Health
+    /// </summary>
     public void ReduceHealth()
     {
         if (_currentHealth == 0) return;
         --_currentHealth;
     }
+    
+    /// <summary>
+    /// Use SceneManager to go to desired scene
+    /// </summary>
+    /// <param name="sceneName">Desired Scene name</param>
     public void ChangeScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
+    
+    /// <summary>
+    /// Delivery successful Increase Point
+    /// </summary>
     public void IncreasePoint()
     {
         TotalPoint++;
@@ -175,6 +213,10 @@ public class GameManager : MonoBehaviour
         point += TotalPoint.ToString();
         _totalPointUI.text = point;
     }
+    
+    /// <summary>
+    /// Increases difficulty related to score
+    /// </summary>
     public void IncreaseDifficulty()
     {
         if (TotalPoint % SpeedIncreaseThreshold == 0) _difficultyMultiplier++;
@@ -184,10 +226,19 @@ public class GameManager : MonoBehaviour
             _difficultyMultiplier = 0;
         _timeStep = TimeStepStartValue - _difficultyMultiplier * DifficultyIncreasePerPoint;
     }
+    
+    /// <summary>
+    /// Pause game for certain time (this function created for accessing from EventManagement)
+    /// </summary>
+    /// <param name="duration">Pause duration</param>
     public void PauseGame(float duration)
     {
         StartCoroutine(PausingGame(duration));
     }
+    
+    /// <summary>
+    /// Pause Game Temporarily or end the game
+    /// </summary>
     public void PauseGame()
     {
         if (_currentHealth == 0)
@@ -200,23 +251,41 @@ public class GameManager : MonoBehaviour
             GamePlayerManager.RespawnPlayer();
         }
     }
+
+    /// <summary>
+    /// Pause game for certain time
+    /// </summary>
+    /// <param name="duration">Pause duration</param>
+    /// <returns></returns>
     private IEnumerator PausingGame(float duration)
     {
         StopGame();
         yield return new WaitForSecondsRealtime(duration);
         StartGame();
     }
+    
+    /// <summary>
+    /// Pause game for determined pause time
+    /// </summary>
     private IEnumerator PausingGame()
     {
         StopGame();
         yield return new WaitForSecondsRealtime(PauseDuration);
         StartGame();
     }
+    
+    /// <summary>
+    /// End Game after determined time
+    /// </summary>
     private IEnumerator EndingGame()
     {
         yield return new WaitForSecondsRealtime(PauseDuration);
         ChangeScene("MainMenu");
     }
+    
+    /// <summary>
+    /// Checks for alarm and time differance
+    /// </summary>
     private IEnumerator CheckingForTimeUp()
     {
         while (true)
@@ -227,6 +296,10 @@ public class GameManager : MonoBehaviour
                 GameEventManager.InvokeTimesUpEvent();
         }
     }
+    
+    /// <summary>
+    /// Gives current difficulty percentage
+    /// </summary>
+    /// <returns>percantage value for difficulty(between 0 and 1, 1 is starting value, but min value is never 0)</returns>
     public float TimestepPercentage() => (_timeStep / TimeStepStartValue);
-
 }

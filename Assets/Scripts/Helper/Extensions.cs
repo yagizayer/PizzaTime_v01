@@ -1,11 +1,11 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System;
-using System.Linq;
 
 public static class Extensions
 {
+    /// <summary>
+    /// Converts Car motion to Cell direction
+    /// </summary>
+    /// <returns>Cell direction</returns>
     public static CellDirection toCellDirection(this CarMotions me)
     {
         CellDirection result = CellDirection.Null;
@@ -15,6 +15,12 @@ public static class Extensions
         if (me == CarMotions.BackToFront) result = CellDirection.Previous;
         return result;
     }
+
+    /// <summary>
+    /// Converts Score from int to string that given lenght
+    /// </summary>
+    /// <param name="numberOfDigits">desired string's length</param>
+    /// <returns></returns>
     public static string ToStringWithFormat(this int me, int numberOfDigits)
     {
         string prefix = "";
@@ -24,6 +30,9 @@ public static class Extensions
         return prefix + me.ToString();
     }
 
+    /// <summary>
+    /// Next Enum option of given enum type
+    /// </summary>
     public static T Next<T>(this T src) where T : struct
     {
         if (!typeof(T).IsEnum) throw new ArgumentException(String.Format("Argument {0} is not an Enum", typeof(T).FullName));
@@ -31,6 +40,10 @@ public static class Extensions
         int j = Array.IndexOf<T>(Arr, src) + 1;
         return (Arr.Length == j) ? Arr[0] : Arr[j];
     }
+
+    /// <summary>
+    /// Previous Enum option of given enum type
+    /// </summary>
     public static T Previous<T>(this T src) where T : struct
     {
         if (!typeof(T).IsEnum) throw new ArgumentException(String.Format("Argument {0} is not an Enum", typeof(T).FullName));
