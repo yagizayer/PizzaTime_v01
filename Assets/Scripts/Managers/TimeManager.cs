@@ -210,6 +210,9 @@ public partial class TimeManager : MonoBehaviour
     {
         float result = 0;
 
+        if (TimeKeeper.SettingMode != TimeMode.Set) return 24 * 60;
+
+
         int hoursDiff = (currentTime.Hours - currentAlarm.Hours) % 12;
         int minutesDiff = (currentTime.Minutes - currentAlarm.Minutes) % 60;
         int amPmDiff = 0;
@@ -230,10 +233,14 @@ public partial class TimeManager : MonoBehaviour
     {
         while (TimeKeeper.SettingMode == TimeMode.Set)
         {
-            yield return new WaitForSecondsRealtime(5); // testing purposes
-            // yield return new WaitForSecondsRealtime(60); // real code
+            // yield return new WaitForSecondsRealtime(5); // testing purposes
+            yield return new WaitForSecondsRealtime(60); // real code
             TimeKeeper.SetTime.IncreaseMinutes();
             UpdateUI();
         }
+    }
+
+    public void ResetAlarm(){
+        TimeKeeper.SetAlarm = new CurrentTime();
     }
 }

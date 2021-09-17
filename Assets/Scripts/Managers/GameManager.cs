@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     [Range(.001f, 5)] public float TimeStepStartValue = 1;
     [Range(.01f, .1f)] public float DifficultyIncreasePerPoint = .05f;
     [Tooltip("Forgiveness for players late dodges (higher is easier to dodge)")]
-    [SerializeField, Range(.01f, 5f)] private float _collisionDetectionDelay = .1f;
     [Range(1, 100)] public int SpeedIncreaseThreshold = 10;
     [Range(1, 1000)] public int SpeedResetThreshold = 100;
     [Range(1, 1000)] public int HealthResetThreshold = 200;
@@ -43,6 +42,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Car Variables")]
     public CarSpawnerDict CarSpawners = new CarSpawnerDict();
+    [Range(1,100)] public int DoubleCarSpawnThreshold = 30;
 
 
 
@@ -217,7 +217,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(PauseDuration);
         ChangeScene("MainMenu");
     }
-
     private IEnumerator CheckingForTimeUp()
     {
         while (true)
@@ -228,4 +227,6 @@ public class GameManager : MonoBehaviour
                 GameEventManager.InvokeTimesUpEvent();
         }
     }
+    public float TimestepPercentage() => (_timeStep / TimeStepStartValue);
+
 }

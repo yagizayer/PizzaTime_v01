@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class CustomersManager : MonoBehaviour
 {
-    [SerializeField] private float Cooldown = 3;
-    [SerializeField, Range(.01f, 100f)] private float _percentage = 5;
     [SerializeField] private int[] TimerCountThresholds = new int[4] { 0, 20, 50, 100 };
     private List<Customer> _allCustomers = new List<Customer>();
     private GameManager _gameManager;
