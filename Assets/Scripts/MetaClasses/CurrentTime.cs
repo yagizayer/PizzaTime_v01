@@ -52,5 +52,16 @@ public class CurrentTime
     {
         IsAM = !IsAM;
     }
+
+    public override bool Equals(object obj)
+    {
+        return obj is CurrentTime time &&
+               _isAM == time._isAM &&
+               _hours == time._hours &&
+               _minutes == time._minutes &&
+               IsAM == time.IsAM &&
+               Hours == time.Hours &&
+               Minutes == time.Minutes;
+    }
 }
 

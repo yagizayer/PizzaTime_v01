@@ -96,6 +96,8 @@ public partial class TimeManager : MonoBehaviour
     }
     public void TimeSet()
     {
+        if (TimeKeeper.SetTime.Equals(TimeKeeper.SetAlarm))
+            TimeKeeper.SetAlarm.IncreaseMinutes();
         if (_timeEditingMode != TimeEditingMode.Null)
             _timeAnimators[_timeEditingMode].enabled = false;
         TimeKeeper.SettingMode = TimeMode.Set;
@@ -108,6 +110,8 @@ public partial class TimeManager : MonoBehaviour
     }
     public void AlarmSet()
     {
+        if (TimeKeeper.SetTime.Equals(TimeKeeper.SetAlarm))
+            TimeKeeper.SetAlarm.IncreaseMinutes();
         _editingTime = true;
         UpdateUI();
         if (_timeEditingMode != TimeEditingMode.Null)
@@ -210,7 +214,7 @@ public partial class TimeManager : MonoBehaviour
     {
         float result = 0;
 
-        if (TimeKeeper.SettingMode != TimeMode.Set) return 24 * 60;
+        if (TimeKeeper.SettingMode != TimeMode.Set) { Debug.Log(TimeKeeper.SettingMode); return 24 * 60; }
 
 
         int hoursDiff = (currentTime.Hours - currentAlarm.Hours) % 12;
@@ -240,7 +244,8 @@ public partial class TimeManager : MonoBehaviour
         }
     }
 
-    public void ResetAlarm(){
+    public void ResetAlarm()
+    {
         TimeKeeper.SetAlarm = new CurrentTime();
     }
 }
