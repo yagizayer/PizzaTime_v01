@@ -1,3 +1,5 @@
+using RotaryHeart.Lib.SerializableDictionary;
+using System.Collections.Generic;
 using System;
 
 public static class Extensions
@@ -25,7 +27,7 @@ public static class Extensions
     {
         string prefix = "";
         int digitDiff = numberOfDigits - me.ToString().Length;
-        for (int i = 0; i < digitDiff ; i++)
+        for (int i = 0; i < digitDiff; i++)
             prefix += "0";
         return prefix + me.ToString();
     }
@@ -50,6 +52,18 @@ public static class Extensions
         T[] Arr = (T[])Enum.GetValues(src.GetType());
         int j = Array.IndexOf<T>(Arr, src) - 1;
         return (j <= 0) ? Arr[0] : Arr[j];
+    }
+
+    /// <summary>
+    /// Makes a random choice in given generic list
+    /// </summary>
+    /// <param name="me">List to choice</param>
+    /// <typeparam name="T">Generic type of list</typeparam>
+    /// <returns>An element of given List</returns>
+    public static T Choice<T>(this List<T> me)
+    {
+        Random r = new Random();
+        return me[r.Next(0, me.Count)];
     }
 
 }
