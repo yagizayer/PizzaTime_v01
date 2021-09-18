@@ -11,11 +11,13 @@ public class Car
     public PositionCell CarPosition;
     public CarMotions CarMotion;
     public int SpawnTick;
-    public Car(PositionCell carPosition, CarMotions carMotion, int spawnTick)
+    public float SpawnTime;
+    public Car(PositionCell carPosition, CarMotions carMotion, int spawnTick, float spawnTime = 0)
     {
         CarPosition = carPosition;
         CarMotion = carMotion;
         SpawnTick = spawnTick;
+        SpawnTime = spawnTime;
     }
 }
 
@@ -35,7 +37,6 @@ public class CarsManager : MonoBehaviour
 
     private CarSpawnerDict _spawners;
     private float _currentCooldown; // in tickCount
-    private bool _ableTospawn = true;
     private int _tickCount = 0;
 
     private GameManager _gameManager;
@@ -99,6 +100,7 @@ public class CarsManager : MonoBehaviour
                     }
             }
 
+
         }
     }
 
@@ -115,6 +117,7 @@ public class CarsManager : MonoBehaviour
         {
             Car car = CurrentCars[i];
             CellDirection direction = CellDirection.Right; // placeholder
+            if (Time.time - car.SpawnTime < .5f) continue;
 
             if (car.CarMotion == CarMotions.LeftToRight) direction = CellDirection.Right; // to right
             if (car.CarMotion == CarMotions.RightToLeft) direction = CellDirection.Left; // to left
@@ -237,7 +240,7 @@ public class CarsManager : MonoBehaviour
                             BlockRoad(spawner.Key.GetComponent<PositionCell>());
                         }
                     }
-                    return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value, _tickCount);
+                    return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value, _tickCount, Time.time);
                 }
                 counter++;
             }
@@ -295,10 +298,10 @@ public class CarsManager : MonoBehaviour
     /// </summary>
     public void ChangeDirection()
     {
+        UnblockRoads();
         if (CurrentMotion == Orientation.Vertical)
         {
             CurrentMotion = Orientation.Horizontal;
-            UnblockRoads();
         }
         else
         {
@@ -381,7 +384,7 @@ public class CarsManager : MonoBehaviour
     /// <summary>
     /// counts every tick
     /// </summary>
-    public void IncreaseTickCounter() =>  _tickCount++;
+    public void IncreaseTickCounter() => _tickCount++;
 
     /// <summary>
     /// Remove all cars from scene
