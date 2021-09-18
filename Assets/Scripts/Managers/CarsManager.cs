@@ -79,26 +79,7 @@ public class CarsManager : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(CarSpawnRate * _gameManager.TimestepPercentage());
             if (_gameManager.CurrentGameState != GameState.Started) continue;
-            // if (!_ableTospawn) continue;
-            if (_gameManager.TotalPoint % _gameManager.SpeedResetThreshold <= _gameManager.DoubleCarSpawnThreshold)
-            {
-                Car car = SpawnCar();
-                CurrentCars.Add(car);
-                ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
-            }
-            else
-            {
-                if (OrientationActive)
-                    if (CurrentMotion == Orientation.Vertical)
-                    {
-                        Car[] cars = SpawnDoubleCar();
-                        foreach (Car car in cars)
-                        {
-                            CurrentCars.Add(car);
-                            ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
-                        }
-                    }
-            }
+            SpawnCar();
 
 
         }
@@ -130,27 +111,24 @@ public class CarsManager : MonoBehaviour
                 // not end of the road yet
 
                 // orientation control
-                if (OrientationActive)
-                {
-                    if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft)
-                        if (CurrentMotion == Orientation.Vertical)
+                if (car.CarMotion == CarMotions.LeftToRight || car.CarMotion == CarMotions.RightToLeft)
+                    if (CurrentMotion == Orientation.Vertical)
+                    {
+                        // Show side car when cars movements are vertical
+                        ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
+                        continue;
+                    }
+                    else
+                    {
+                        // Remove Side cars when Cars movements are horizontal
+                        if (car.SpawnTick + 3 < _tickCount)// remove in 3 tick
                         {
-                            // Show side car when cars movements are vertical
-                            ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
-                            continue;
+                            UnblockRoads(car.CarPosition);
+                            HideCar(car.CarPosition);
+                            carsToRemove.Add(car);
                         }
-                        else
-                        {
-                            // Remove Side cars when Cars movements are horizontal
-                            if (car.SpawnTick + 3 < _tickCount)// remove in 3 tick
-                            {
-                                UnblockRoads(car.CarPosition);
-                                HideCar(car.CarPosition);
-                                carsToRemove.Add(car);
-                            }
-                            continue;
-                        }
-                }
+                        continue;
+                    }
 
                 // proceeding part
                 if (_gameManager.GamePlayerManager.PlayerCell == targetCell)
@@ -200,64 +178,61 @@ public class CarsManager : MonoBehaviour
     //------------------------
 
     /// <summary>
-    /// Spawns a Car on a random spawner
+    /// Spawns Cars
     /// </summary>
-    /// <returns>Car object</returns>
-    private Car SpawnCar()
+    private void SpawnCar()
     {
-        System.Random r = new System.Random();
-        int haltControl = 0;
-        while (true)
-        {
-            if (haltControl++ == 500)
-            {
-                Debug.LogError("There is a problem");
-                Application.Quit();
-            }
-            int selectedSpawnerIndex = r.Next(0, _spawners.Count);
-            int counter = 0;
-            foreach (KeyValuePair<Transform, CarMotions> spawner in _spawners)
-            {
-                if (selectedSpawnerIndex == counter)
-                {
-                    // orientation control
-                    if (OrientationActive)
-                    {
-                        // wrong ways 
-                        if (CurrentMotion == Orientation.Vertical)
-                            if (spawner.Value == CarMotions.LeftToRight || spawner.Value == CarMotions.RightToLeft) continue;
-                        if (CurrentMotion == Orientation.Horizontal)
-                            if (spawner.Value == CarMotions.FrontToBack || spawner.Value == CarMotions.BackToFront) continue;
+        List<Car> result = new List<Car>();
 
-                        // correct ways
-                        if (
-                            CurrentMotion == Orientation.Horizontal &&
-                            (spawner.Value == CarMotions.LeftToRight
-                            || spawner.Value == CarMotions.RightToLeft)
-                            )
-                        {
-                            // if horizontal car spawned block crossing top/bottom
-                            BlockRoad(spawner.Key.GetComponent<PositionCell>());
-                        }
-                    }
-                    return new Car(spawner.Key.GetComponent<PositionCell>(), spawner.Value, _tickCount, Time.time);
-                }
-                counter++;
+        // Spawn Vertical Car
+        // is totalPoint below threshold
+        if (_gameManager.TotalPoint % _gameManager.SpeedResetThreshold <= _gameManager.DoubleCarSpawnThreshold)
+        {
+            // normally select between 3 choices
+            System.Random r = new System.Random();
+            int verticalCarType = r.Next(3);
+            /*
+                1- left spawner
+                2- right spawner
+                3- both spawners
+            */
+            if (verticalCarType == 1)
+            {
+                result.Add(new Car(_topLeftSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount, Time.time));
+            }
+            if (verticalCarType == 2)
+            {
+                result.Add(new Car(_topRightSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount, Time.time));
+            }
+            if (verticalCarType == 3)
+            {
+                result.Add(new Car(_topLeftSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount, Time.time));
+                result.Add(new Car(_topRightSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount, Time.time));
             }
         }
-    }
+        else
+        {
+            result.Add(new Car(_topLeftSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount, Time.time));
+            result.Add(new Car(_topRightSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount, Time.time));
+        }
 
-    /// <summary>
-    /// Spawns Double cars from top to bottom
-    /// </summary>
-    /// <returns>2 car object</returns>
-    private Car[] SpawnDoubleCar()
-    {
-        Car[] result = new Car[2];
+        // Spawn Horizontal Car
+        if (CurrentMotion == Orientation.Horizontal)
+        {
+            List<(CarMotions, Transform)> horizontalSpawners = new List<(CarMotions, Transform)>(){
+                (CarMotions.LeftToRight,_leftSpawner),
+                (CarMotions.RightToLeft,_rightSpawner)
+            };
+            (CarMotions, Transform) randomHorizontalSpawner = horizontalSpawners.Choice();
 
-        result[0] = new Car(_topLeftSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount);
-        result[1] = new Car(_topRightSpawner.GetComponent<PositionCell>(), CarMotions.BackToFront, _tickCount);
-        return result;
+            result.Add(new Car(randomHorizontalSpawner.Item2.GetComponent<PositionCell>(), randomHorizontalSpawner.Item1, _tickCount, Time.time));
+            BlockRoad(randomHorizontalSpawner.Item2.GetComponent<PositionCell>());
+        }
+        foreach (Car car in result)
+        {
+            CurrentCars.Add(car);
+            ShowCar(car.CarPosition, _carSprites[car.CarMotion]);
+        }
     }
 
     /// <summary>
