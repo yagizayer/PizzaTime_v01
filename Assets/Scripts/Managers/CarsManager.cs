@@ -131,6 +131,7 @@ public class CarsManager : MonoBehaviour
                     }
 
                 // proceeding part
+                // test_2 
                 if (_gameManager.GamePlayerManager.PlayerCell == targetCell)
                     StartCoroutine(_gameManager.CheckCollisionLater(true));
                 else
